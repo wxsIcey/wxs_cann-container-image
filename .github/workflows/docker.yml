@@ -15,6 +15,7 @@ on:
       - 'main'
     types:
       - 'synchronize'
+      - 'opened'
     paths:
       - '.github/workflows/docker.yml'
       - 'cann/**'
