@@ -46,7 +46,7 @@ jobs:
 
       - name: Render Dockerfiles
         run: |
-          python template.py
+          python tools/template.py
 
       - name: Commit and push changes
         run: |
