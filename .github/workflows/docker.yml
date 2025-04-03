@@ -34,7 +34,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.ref_name }}
+          ref: ${{ github.head_ref || github.ref_name }}
+
+      - name: Debug Ref
+        run: echo "Ref Name: ${{ github.ref_name }}"
 
       - name: Set up Python
         uses: actions/setup-python@v4
