@@ -27,12 +27,14 @@ on:
       - 'published'
 
 jobs:
-  render_dockerfile:
-    name: Render Dockerfile
+  render:
+    name: render
     runs-on: linux-x64-azure
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -52,15 +54,16 @@ jobs:
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -B ${{ github.ref_name }}
           git add .
           git commit -m "Auto-generate Dockerfiles from arg.json" || echo "No changes to commit"
-          git push
+          git push origin ${{ github.ref_name }}
 
   prepare:
     name: prepare
     runs-on: linux-x64-azure
     needs:
-      - render_dockerfile
+      - render
     outputs:
       targets: ${{ steps.list-target.outputs.targets }}
     steps:
