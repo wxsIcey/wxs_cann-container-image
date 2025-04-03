@@ -50,6 +50,11 @@ jobs:
         run: |
           python tools/template.py
 
+      - name: Debug Rendered Files
+        run: |
+          ls -l cann/test
+          cat cann/test/Dockerfile || echo "Dockerfile not found"
+
       - name: Commit and push changes
         run: |
           git config --global user.name "github-actions[bot]"
