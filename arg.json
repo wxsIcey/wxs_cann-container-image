@@ -1,24 +1,9 @@
 {
   "registry": [
     {
-      "name": "dockerhub",
-      "url": "docker.io",
-      "owner": "ascendai"
-    },
-    {
-      "name": "quay",
-      "url": "quay.io",
-      "owner": "ascend"
-    },
-    {
       "name": "openmind",
       "url": "swr.cn-southwest-2.myhuaweicloud.com",
       "owner": "base_image"
-    },
-    {
-      "name": "ascendhub",
-      "url": "swr.cn-east-3.myhuaweicloud.com",
-      "owner": "ascendhub-test"
     }
   ],
   "cann": [
@@ -32,25 +17,6 @@
       "tags": {
         "common": [
           "test-ubuntu-8.1.RC1.alpha001"
-        ],
-        "ascendhub": [
-          "test-ubuntu-8.1.RC1.alpha001"
-        ]
-      }
-    },
-    {
-      "cann_version": "8.1.RC1.alpha001",
-      "cann_chip": "910b",
-      "os_name": "openeuler",
-      "os_version": "22.03",
-      "py_version": "3.10",
-      "nnal_version": "8.0.0",
-      "tags": {
-        "common": [
-          "test-openeuler-8.1.RC1.alpha001"
-        ],
-        "ascendhub": [
-          "test-openeuler-8.1.RC1.alpha001"
         ]
       }
     }
