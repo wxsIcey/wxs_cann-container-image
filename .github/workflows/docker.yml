@@ -8,7 +8,7 @@ on:
     paths:
       - ".github/workflows/docker.yml"
       - "cann/**"
-      - "arg.json"
+      - "arg.yml"
       - "docker-bake.hcl"
   pull_request:
     branches:
@@ -16,7 +16,7 @@ on:
     paths:
       - ".github/workflows/docker.yml"
       - "cann/**"
-      - "arg.json"
+      - "arg.yml"
       - "docker-bake.hcl"
   release:
     types:
@@ -37,7 +37,7 @@ jobs:
         uses: docker/bake-action/subaction/list-targets@v5
         with:
           files: |
-            arg.json
+            arg.yml
             docker-bake.hcl
 
   cann:
@@ -111,7 +111,7 @@ jobs:
         uses: docker/bake-action@v5
         with:
           files: |
-            ${{ github.workspace }}/arg.json
+            ${{ github.workspace }}/arg.yml
             ${{ github.workspace }}/docker-bake.hcl
             ${{ steps.metadata.outputs.bake-file-labels }}
             ${{ steps.metadata.outputs.bake-file-annotations }}
