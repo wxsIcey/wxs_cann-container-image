@@ -1,5 +1,8 @@
 import os
+import re
+import requests
 import json
+from distutils.version import LooseVersion
 from jinja2 import Environment, FileSystemLoader
 
 BASE_URL = "https://ascend-repo.obs.cn-east-2.myhuaweicloud.com"
@@ -13,7 +16,26 @@ ALPHA_DICT = {
 
 env = Environment(loader=FileSystemLoader('tools/template'))
 
-def get_download_url(cann_chip, version, nnal_version):
+def get_python_download_url(version):  
+    try:
+        response = requests.get("https://www.python.org/ftp/python/")
+        response.raise_for_status()
+        versions = re.findall(rf"{version}\.[0-9]+", response.text)
+        if not versions:
+            print(f"[WARNING] Could not find the latest version for Python {version}")
+            exit(1)
+        latest_version = sorted(versions, key=LooseVersion)[-1]
+        print(f"Latest Python version found: {latest_version}")
+    
+    except requests.RequestException as e:
+        print(f"[WARNING] Error fetching Python versions: {e}")
+        exit(1)
+        
+    py_installer_tgz = "Python-" + latest_version
+    py_installer_url =  os.path.join("https://repo.huaweicloud.com/python/", latest_version, py_installer_tgz + ".tgz")
+    return py_installer_tgz, py_installer_url
+       
+def get_cann_download_url(cann_chip, version, nnal_version):
     if "alpha" in version:
         if version not in ALPHA_DICT:
             raise ValueError(f"Unsupported version: {version}. Supported versions are: {list(ALPHA_DICT.keys())}")
@@ -34,7 +56,12 @@ def get_download_url(cann_chip, version, nnal_version):
     
 def render_and_save(template_name, item):
     template = env.get_template(template_name)
-    cann_toolkit_url_prefix, cann_kernels_url_prefix, cann_nnal_url_prefix = get_download_url(
+    
+    py_installer_tgz, py_installer_url = get_python_download_url(item['py_version'])
+    item['py_installer_tgz'] = py_installer_tgz
+    item['py_installer_url'] = py_installer_url
+    
+    cann_toolkit_url_prefix, cann_kernels_url_prefix, cann_nnal_url_prefix = get_cann_download_url(
         item['cann_chip'], 
         item['cann_version'], 
         item['nnal_version']
@@ -42,6 +69,7 @@ def render_and_save(template_name, item):
     item['cann_toolkit_url_prefix'] = cann_toolkit_url_prefix
     item['cann_kernels_url_prefix'] = cann_kernels_url_prefix
     item['cann_nnal_url_prefix'] = cann_nnal_url_prefix
+    
     rendered_content = template.render(item=item)
 
     output_path = os.path.join("cann", item['tags']['common'][0], "Dockerfile")
