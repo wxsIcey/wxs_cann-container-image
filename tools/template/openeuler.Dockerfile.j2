@@ -63,7 +63,6 @@ RUN yum update -y && \
         unzip \
         pciutils \
         net-tools \
-        sqlite-devel \
         lapack-devel \
         gcc-gfortran \
         util-linux \
@@ -102,12 +101,14 @@ RUN export ASCEND_HOME_PATH=/usr/local/Ascend && \
     printf "Y\n" | ~/Ascend-cann-nnal.run --install && \
     rm -f ~/Ascend-cann-nnal.run
     
-
 # Stage 3: Copy results from previous stages
 FROM ${OS_NAME}/${OS_NAME}:${BASE_VERSION} AS official-openeuler
 
 # Arguments
 ARG PY_VERSION
+
+# Python Environment variables
+ENV PATH=/usr/local/python${PY_VERSION}/bin:${PATH}
 
 # Note: Toolkit Environment variables, obtained from /usr/local/Ascend/ascend-toolkit/set_env.sh
 ENV ASCEND_TOOLKIT_HOME=/usr/local/Ascend/ascend-toolkit/latest
