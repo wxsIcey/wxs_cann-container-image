@@ -178,4 +178,3 @@ RUN apt-get update \
 COPY --from=cann-installer /usr/local/python${PY_VERSION} /usr/local/python${PY_VERSION}
 COPY --from=cann-installer /usr/local/Ascend /usr/local/Ascend
 COPY --from=cann-installer /etc/Ascend /etc/Ascend
-
