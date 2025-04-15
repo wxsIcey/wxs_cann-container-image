@@ -1,17 +1,9 @@
-# Arguments
-ARG BASE_VERSION=22.03
-ARG PY_VERSION=3.10
-
 # Stage 1: Install Python
-FROM openeuler/openeuler:${BASE_VERSION} AS python-installer
-
-# Arguments
-ARG PY_VERSION
+FROM openeuler/openeuler:22.03 AS python-installer
 
 # Python Environment variables
-ENV PATH=/usr/local/python${PY_VERSION}/bin:${PATH}
+ENV PATH=/usr/local/python3.10.17/bin:${PATH}
 
-# Install dependencies
 RUN yum update -y && \
     yum install -y \
         gcc \
@@ -41,23 +33,21 @@ RUN yum update -y && \
 RUN curl -fsSL https://repo.huaweicloud.com/python/3.10.17/Python-3.10.17.tgz -o /tmp/Python-3.10.17 && \
     tar -xf /tmp/Python-3.10.17 -C /tmp && \
     cd /tmp/Python-3.10.17 && \
-    mkdir -p /usr/local/python${PY_VERSION}/lib && \
-    ./configure --enable-shared --enable-shared LDFLAGS="-Wl,-rpath /usr/local/python${PY_VERSION}/lib" --prefix=/usr/local/python${PY_VERSION} && \
+    mkdir -p /usr/local/python3.10.17/lib && \
+    ./configure --enable-shared --enable-shared LDFLAGS="-Wl,-rpath /usr/local/python3.10.17/lib" --prefix=/usr/local/python3.10.17 && \
     make -j $(nproc) && \
     make altinstall && \
-    ln -sf /usr/local/python${PY_VERSION}/bin/python${PY_VERSION} /usr/local/python${PY_VERSION}/bin/python3 && \
-    ln -sf /usr/local/python${PY_VERSION}/bin/pip${PY_VERSION} /usr/local/python${PY_VERSION}/bin/pip3 && \
-    ln -sf /usr/local/python${PY_VERSION}/bin/python3 /usr/local/python${PY_VERSION}/bin/python && \
-    ln -sf /usr/local/python${PY_VERSION}/bin/pip3 /usr/local/python${PY_VERSION}/bin/pip && \
+    ln -sf /usr/local/python3.10.17/bin/python3.10.17 /usr/local/python3.10.17/bin/python3 && \
+    ln -sf /usr/local/python3.10.17/bin/pip3.10.17 /usr/local/python3.10.17/bin/pip3 && \
+    ln -sf /usr/local/python3.10.17/bin/python3 /usr/local/python3.10.17/bin/python && \
+    ln -sf /usr/local/python3.10.17/bin/pip3 /usr/local/python3.10.17/bin/pip && \
     rm -rf /tmp/*
 
 # Stage 2: Install CANN
 FROM python-installer AS cann-installer
 
-# Arguments
 ARG TARGETPLATFORM
 
-# Install dependencies
 RUN yum update -y && \
     yum install -y \
         unzip \
@@ -76,39 +66,41 @@ RUN ARCH=$(case "${TARGETPLATFORM}" in \
         "linux/arm64") echo "aarch64" ;; \
         *) echo "Unsupported TARGETPLATFORM: ${TARGETPLATFORM}" && exit 1 ;; \
     esac) && \
-    CANN_TOOLKIT_URL=https://ascend-repo.obs.cn-east-2.myhuaweicloud.com/Milan-ASL/Milan-ASL%20V100R001C21B800TP034/Ascend-cann-toolkit_8.1.RC1.alpha001_linux-${ARCH}.run && \
-    CANN_KERNELS_URL=https://ascend-repo.obs.cn-east-2.myhuaweicloud.com/Milan-ASL/Milan-ASL%20V100R001C21B800TP034/Ascend-cann-kernels-910b_8.1.RC1.alpha001_linux-${ARCH}.run && \
-    CANN_NNAL_URL=https://ascend-repo.obs.cn-east-2.myhuaweicloud.com/CANN/CANN%208.0.0/Ascend-cann-nnal_8.0.0_linux-${ARCH}.run && \
-    wget ${CANN_TOOLKIT_URL} -O ~/Ascend-cann-toolkit.run && \
-    wget ${CANN_KERNELS_URL} -O ~/Ascend-cann-kernels.run && \
+    export ARCH
+
+# Note: download CANN Toolkit Development Kit Package
+RUN CANN_TOOLKIT_URL=https://ascend-repo.obs.cn-east-2.myhuaweicloud.com/Milan-ASL/Milan-ASL%20V100R001C21B800TP034/Ascend-cann-toolkit_8.1.RC1.alpha001_linux-${ARCH}.run && \
+    wget ${CANN_TOOLKIT_URL} -O ~/Ascend-cann-toolkit.run
+
+# Note: download CANN Kernels Operator Package
+RUN CANN_KERNELS_URL=https://ascend-repo.obs.cn-east-2.myhuaweicloud.com/Milan-ASL/Milan-ASL%20V100R001C21B800TP034/Ascend-cann-kernels-910b_8.1.RC1.alpha001_linux-${ARCH}.run && \
+    wget ${CANN_KERNELS_URL} -O ~/Ascend-cann-kernels.run
+
+# Note: download CANN NNAL Neural Network Acceleration Library
+RUN CANN_NNAL_URL=https://ascend-repo.obs.cn-east-2.myhuaweicloud.com/CANN/CANN%208.0.0/Ascend-cann-nnal_8.0.0_linux-${ARCH}.run && \
     wget ${CANN_NNAL_URL} -O ~/Ascend-cann-nnal.run
 
-# Note: download and install CANN Toolkit Development Kit Package
+# Note: install CANN Toolkit Development Kit Package
 RUN chmod +x ~/Ascend-cann-toolkit.run && \
-    printf "Y\n" | ~/Ascend-cann-toolkit.run --install && \
+    ~/Ascend-cann-toolkit.run --quiet --install --install-for-all && \
     rm -f ~/Ascend-cann-toolkit.run
 
-# Note: download and install CANN Kernels Operator Package
+# Note: install CANN Kernels Operator Package
 RUN chmod +x ~/Ascend-cann-kernels.run && \
-    printf "Y\n" | ~/Ascend-cann-kernels.run --install && \
+    ~/Ascend-cann-kernels.run --quiet --install --install-for-all && \
     rm -f ~/Ascend-cann-kernels.run
 
-# Note: download and install CANN NNAL Neural Network Acceleration Library
-RUN export ASCEND_HOME_PATH=/usr/local/Ascend && \
-    export ASCEND_TOOLKIT_HOME=/usr/local/Ascend/ascend-toolkit/latest && \
-    export ASCEND_NNAE_HOME=/usr/local/Ascend/nnal && \
+# Note: install CANN NNAL Neural Network Acceleration Library
+RUN source /usr/local/Ascend/ascend-toolkit/set_env.sh && \
     chmod +x ~/Ascend-cann-nnal.run && \
-    printf "Y\n" | ~/Ascend-cann-nnal.run --install && \
+    ~/Ascend-cann-nnal.run --quiet --install --install-for-all && \
     rm -f ~/Ascend-cann-nnal.run
     
 # Stage 3: Copy results from previous stages
-FROM openeuler/openeuler:${BASE_VERSION} AS official-openeuler
-
-# Arguments
-ARG PY_VERSION
+FROM openeuler/openeuler:22.03 AS official-openeuler
 
 # Python Environment variables
-ENV PATH=/usr/local/python${PY_VERSION}/bin:${PATH}
+ENV PATH=/usr/local/python3.10.17/bin:${PATH}
 
 # Note: Toolkit Environment variables, obtained from /usr/local/Ascend/ascend-toolkit/set_env.sh
 ENV ASCEND_TOOLKIT_HOME=/usr/local/Ascend/ascend-toolkit/latest
@@ -154,10 +146,8 @@ ENV ASDOPS_LOG_PATH=/root
 ENV ASDOPS_TILING_PARSE_CACHE_DISABLE=0
 ENV LCCL_DETERMINISTIC=0
 
-# Change the default shell
 SHELL [ "/bin/bash", "-c" ]
 
-# Install dependencies
 RUN yum update -y && \
     yum install -y \
         ca-certificates \
@@ -168,7 +158,6 @@ RUN yum update -y && \
     && rm -rf /var/cache/yum \
     && rm -rf /tmp/*
 
-# Copy files
-COPY --from=cann-installer /usr/local/python${PY_VERSION} /usr/local/python${PY_VERSION}
+COPY --from=cann-installer /usr/local/python3.10.17 /usr/local/python3.10.17
 COPY --from=cann-installer /usr/local/Ascend /usr/local/Ascend
 COPY --from=cann-installer /etc/Ascend /etc/Ascend
