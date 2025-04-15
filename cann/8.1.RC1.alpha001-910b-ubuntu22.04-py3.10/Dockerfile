@@ -28,15 +28,15 @@ RUN apt-get update \
     && rm -rf /tmp/*
 
 # Install Python
-RUN curl -fsSL https://repo.huaweicloud.com/python/3.10.17/Python-3.10.17.tgz -o /tmp/Python-3.10.17 && \
-    tar -xf /tmp/Python-3.10.17 -C /tmp && \
+RUN curl -fsSL https://repo.huaweicloud.com/python/3.10.17/Python-3.10.17.tgz -o /tmp/Python-3.10.17.tgz && \
+    tar -xf /tmp/Python-3.10.17.tgz -C /tmp && \
     cd /tmp/Python-3.10.17 && \
     mkdir -p /usr/local/python3.10.17/lib && \
     ./configure --enable-shared --enable-shared LDFLAGS="-Wl,-rpath /usr/local/python3.10.17/lib" --prefix=/usr/local/python3.10.17 && \
     make -j $(nproc) && \
     make altinstall && \
-    ln -sf /usr/local/python3.10.17/bin/python3.10.17 /usr/local/python3.10.17/bin/python3 && \
-    ln -sf /usr/local/python3.10.17/bin/pip3.10.17 /usr/local/python3.10.17/bin/pip3 && \
+    ln -sf /usr/local/python3.10.17/bin/python3.10 /usr/local/python3.10.17/bin/python3 && \
+    ln -sf /usr/local/python3.10.17/bin/pip3.10 /usr/local/python3.10.17/bin/pip3 && \
     ln -sf /usr/local/python3.10.17/bin/python3 /usr/local/python3.10.17/bin/python && \
     ln -sf /usr/local/python3.10.17/bin/pip3 /usr/local/python3.10.17/bin/pip && \
     rm -rf /tmp/*

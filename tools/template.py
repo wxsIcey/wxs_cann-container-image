@@ -31,9 +31,9 @@ def get_python_download_url(version):
         print(f"[WARNING] Error fetching Python versions: {e}")
         exit(1)
         
-    py_installer_tgz = "Python-" + py_latest_version
-    py_installer_url =  os.path.join("https://repo.huaweicloud.com/python/", py_latest_version, py_installer_tgz + ".tgz")
-    return py_installer_tgz, py_installer_url, py_latest_version
+    py_installer_package = "Python-" + py_latest_version
+    py_installer_url =  os.path.join("https://repo.huaweicloud.com/python/", py_latest_version, py_installer_package + ".tgz")
+    return py_installer_package, py_installer_url, py_latest_version
        
 def get_cann_download_url(cann_chip, version, nnal_version):
     if "alpha" in version:
@@ -57,8 +57,8 @@ def get_cann_download_url(cann_chip, version, nnal_version):
 def render_and_save(template_name, item):
     template = env.get_template(template_name)
     
-    py_installer_tgz, py_installer_url, py_latest_version= get_python_download_url(item['py_version'])
-    item['py_installer_tgz'] = py_installer_tgz
+    py_installer_package, py_installer_url, py_latest_version= get_python_download_url(item['py_version'])
+    item['py_installer_package'] = py_installer_package
     item['py_installer_url'] = py_installer_url
     item['py_latest_version'] = py_latest_version
     
