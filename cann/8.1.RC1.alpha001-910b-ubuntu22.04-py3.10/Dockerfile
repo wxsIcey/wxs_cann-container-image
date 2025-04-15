@@ -89,7 +89,7 @@ RUN chmod +x ~/Ascend-cann-kernels.run && \
     rm -f ~/Ascend-cann-kernels.run
 
 # Note: install CANN NNAL Neural Network Acceleration Library
-RUN bash /usr/local/Ascend/ascend-toolkit/set_env.sh && \
+RUN . /usr/local/Ascend/ascend-toolkit/set_env.sh && \
     chmod +x ~/Ascend-cann-nnal.run && \
     ~/Ascend-cann-nnal.run --quiet --install --install-for-all && \
     rm -f ~/Ascend-cann-nnal.run
