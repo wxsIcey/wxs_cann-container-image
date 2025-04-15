@@ -102,7 +102,7 @@ RUN export ASCEND_HOME_PATH=/usr/local/Ascend && \
     rm -f ~/Ascend-cann-nnal.run
     
 # Stage 3: Copy results from previous stages
-FROM ${OS_NAME}/${OS_NAME}:${BASE_VERSION} AS official-openeuler
+FROM openeuler/openeuler:${BASE_VERSION} AS official-openeuler
 
 # Arguments
 ARG PY_VERSION
