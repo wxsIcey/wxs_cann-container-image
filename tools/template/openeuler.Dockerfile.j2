@@ -1,10 +1,9 @@
 # Arguments
 ARG BASE_VERSION={{ item.os_version }}
 ARG PY_VERSION={{ item.py_version }}
-ARG OS_NAME={{ item.os_name }}
 
 # Stage 1: Install Python
-FROM ${OS_NAME}/${OS_NAME}:${BASE_VERSION} AS cann-installer
+FROM openeuler/openeuler:${BASE_VERSION} AS python-installer
 
 # Arguments
 ARG PY_VERSION
@@ -53,6 +52,7 @@ RUN curl -fsSL {{ item.py_installer_url }} -o /tmp/{{ item.py_installer_tgz }} &
     rm -rf /tmp/*
 
 # Stage 2: Install CANN
+FROM python-installer AS cann-installer
 
 # Arguments
 ARG TARGETPLATFORM

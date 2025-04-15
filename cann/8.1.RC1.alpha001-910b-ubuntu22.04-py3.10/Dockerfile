@@ -1,10 +1,9 @@
 # Arguments
 ARG BASE_VERSION=22.04
 ARG PY_VERSION=3.10
-ARG OS_NAME=ubuntu
 
 # Stage 1: Install Python
-FROM ${OS_NAME}:${BASE_VERSION} AS cann-installer
+FROM ubuntu:${BASE_VERSION} AS python-installer
 
 # Arguments
 ARG PY_VERSION
@@ -51,6 +50,7 @@ RUN curl -fsSL https://repo.huaweicloud.com/python/3.10.17/Python-3.10.17.tgz -o
     rm -rf /tmp/*
 
 # Stage 2: Install CANN
+FROM python-installer AS cann-installer
 
 # Arguments
 ARG TARGETPLATFORM
