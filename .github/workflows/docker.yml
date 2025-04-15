@@ -103,9 +103,8 @@ jobs:
         with:
           bake-target: "docker-metadata-action"
 
-      - name: Test
-        id: test
-        run: ls ${{ github.workspace }}
+      - name: Debug workspace
+        run: ls -R ${{ github.workspace }}
 
       - name: Build and push Docker image
         id: bake
