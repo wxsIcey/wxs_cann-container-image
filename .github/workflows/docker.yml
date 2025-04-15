@@ -37,8 +37,8 @@ jobs:
         uses: docker/bake-action/subaction/list-targets@v5
         with:
           files: |
-            ./arg.json
-            ./docker-bake.hcl
+            arg.json
+            docker-bake.hcl
 
   cann:
     name: build ${{ matrix.target }}
@@ -102,9 +102,6 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           bake-target: "docker-metadata-action"
-
-      - name: Debug workspace
-        run: ls -R ${{ github.workspace }}
 
       - name: Build and push Docker image
         id: bake
