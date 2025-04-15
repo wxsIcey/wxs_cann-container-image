@@ -42,7 +42,7 @@ jobs:
 
   cann:
     name: build ${{ matrix.target }}
-    runs-on: ubuntu-latest
+    runs-on: linux-x64-azure
     needs:
       - prepare
     strategy:
@@ -51,6 +51,9 @@ jobs:
       matrix:
         target: ${{ fromJson(needs.prepare.outputs.targets) }}
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
 
@@ -95,7 +98,7 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          password: ${{ github.token }}
 
       - name: Extract metadata for Docker
         id: metadata
@@ -128,6 +131,7 @@ jobs:
 
       - name: Upload metadata
         id: upload-artifact
+        if: ${{ inputs.upload-metadata }}
         uses: actions/upload-artifact@v4
         with:
           name: ${{ steps.export.outputs.metadata-file-name }}
