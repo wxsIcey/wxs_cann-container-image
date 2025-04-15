@@ -65,23 +65,17 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
+# Note: Get the download link according to ARCH and download the installation package
 RUN ARCH=$(case "${TARGETPLATFORM}" in \
         "linux/amd64") echo "x86_64" ;; \
         "linux/arm64") echo "aarch64" ;; \
         *) echo "Unsupported TARGETPLATFORM: ${TARGETPLATFORM}" && exit 1 ;; \
     esac) && \
-    export ARCH
-
-# Note: download CANN Toolkit Development Kit Package
-RUN CANN_TOOLKIT_URL={{item.cann_toolkit_url_prefix}}-${ARCH}.run && \
-    wget ${CANN_TOOLKIT_URL} -O ~/Ascend-cann-toolkit.run
-
-# Note: download CANN Kernels Operator Package
-RUN CANN_KERNELS_URL={{item.cann_kernels_url_prefix}}-${ARCH}.run && \
-    wget ${CANN_KERNELS_URL} -O ~/Ascend-cann-kernels.run
-
-# Note: download CANN NNAL Neural Network Acceleration Library
-RUN CANN_NNAL_URL={{item.cann_nnal_url_prefix}}-${ARCH}.run && \
+    CANN_TOOLKIT_URL={{item.cann_toolkit_url_prefix}}-${ARCH}.run && \
+    CANN_KERNELS_URL={{item.cann_kernels_url_prefix}}-${ARCH}.run && \
+    CANN_NNAL_URL={{item.cann_nnal_url_prefix}}-${ARCH}.run && \
+    wget ${CANN_TOOLKIT_URL} -O ~/Ascend-cann-toolkit.run && \
+    wget ${CANN_KERNELS_URL} -O ~/Ascend-cann-kernels.run && \
     wget ${CANN_NNAL_URL} -O ~/Ascend-cann-nnal.run
 
 # Note: install CANN Toolkit Development Kit Package
