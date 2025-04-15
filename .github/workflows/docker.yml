@@ -42,7 +42,7 @@ jobs:
 
   cann:
     name: build ${{ matrix.target }}
-    runs-on: linux-x64-azure
+    runs-on: ubuntu-latest
     needs:
       - prepare
     strategy:
@@ -51,9 +51,6 @@ jobs:
       matrix:
         target: ${{ fromJson(needs.prepare.outputs.targets) }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
 
