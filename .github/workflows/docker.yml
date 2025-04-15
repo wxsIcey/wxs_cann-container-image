@@ -37,8 +37,8 @@ jobs:
         uses: docker/bake-action/subaction/list-targets@v6
         with:
           files: |
-            ${{ github.workspace }}/arg.json
-            ${{ github.workspace }}/docker-bake.hcl
+            ./arg.json
+            ./docker-bake.hcl
 
   cann:
     name: build ${{ matrix.target }}
