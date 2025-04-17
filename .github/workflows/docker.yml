@@ -23,7 +23,7 @@ on:
 jobs:
   build-and-push:
     name: Build and Push
-    runs-on: ubuntu-latest
+    runs-on: linux-x64-azure
     strategy:
       fail-fast: false
       matrix:
