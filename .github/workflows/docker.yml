@@ -40,7 +40,7 @@ jobs:
         id: get-repositories
         run: |
           CONFIG=${{ steps.config.outputs.config }}
-          REPOSITORIES=$(echo "$CONFIG" | jq -r '.repository')
+          REPOSITORIES=$(echo "$CONFIG" | jq -r '.repository[]')
           echo "repositories=${REPOSITORIES}" >> $GITHUB_OUTPUT
       
       - name: Set build matrix
