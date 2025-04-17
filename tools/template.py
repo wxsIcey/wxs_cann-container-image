@@ -54,7 +54,7 @@ def get_cann_download_url(cann_chip, version, nnal_version):
     cann_nnal_url_prefix = f"{nnal_url_prefix}/{nnal_file_prefix}"
     return cann_toolkit_url_prefix, cann_kernels_url_prefix, cann_nnal_url_prefix
     
-def render_and_save(template_name, item):
+def render_and_save_dockerfile(template_name, item):
     template = env.get_template(template_name)
     
     py_installer_package, py_installer_url, py_latest_version= get_python_download_url(item['py_version'])
@@ -79,18 +79,50 @@ def render_and_save(template_name, item):
         f.write(rendered_content)
     print(f"Generated: {output_path}")
 
-def process_args(args, ubuntu_template, openeuler_template):
+def process_dockerfile_args(args, ubuntu_template, openeuler_template):
     for arg in args["cann"]:
         if arg["os_name"] == "ubuntu":
             template = ubuntu_template
         else:
             template = openeuler_template
-        render_and_save(template, arg)
+        render_and_save_dockerfile(template, arg)
+        
+def generate_tags(tags, registry):
+    result = []
+    for reg in registry:
+        if reg["name"] in tags:
+            for tag in tags[reg["name"]]:
+                result.append(f"{reg['url']}/{reg['owner']}/cann:{tag}")
+        else:
+            for tag in tags["common"]:
+                result.append(f"{reg['url']}/{reg['owner']}/cann:{tag}")
+    return result
+
+def render_and_save_workflow(args, workflow_template):
+    targets = []
+    for arg in args["cann"]:
+        target = {
+            "name": arg['tags']['common'][0],
+            "context": os.path.join("cann", arg['tags']['common'][0]),
+            "dockerfile": "Dockerfile",
+            "tags": generate_tags(arg["tags"], args["registry"]),
+        }
+        targets.append(target)
+        
+    template = env.get_template(workflow_template)
+    rendered_content = template.render(targets=targets)
+    
+    output_path = os.path.join(".github", "workflows", "docker.yml")
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
+    with open(output_path, 'w') as f:
+        f.write(rendered_content)
+    print(f"Generated: {output_path}")
 
 def main():  
     with open('arg.json', 'r') as f:
         args = json.load(f)
-    process_args(args, 'ubuntu.Dockerfile.j2', 'openeuler.Dockerfile.j2')
+    process_dockerfile_args(args, 'ubuntu.Dockerfile.j2', 'openeuler.Dockerfile.j2')
+    render_and_save_workflow(args, 'docker_template.yml.j2')
 
 
 if __name__ == "__main__":

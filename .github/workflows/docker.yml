@@ -21,49 +21,24 @@ on:
       - "published"
 
 jobs:
-  prepare:
-    name: prepare
+  build-and-push:
+    name: Build and Push
     runs-on: ubuntu-latest
-    outputs:
-      matrix: ${{ steps.set-matrix.outputs.matrix }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Load config from file
-        id: config
-        run: |
-          CONFIG_JSON=$(jq -c . arg.json)
-          echo "config=${CONFIG_JSON}" >> $GITHUB_OUTPUT
-
-      - name: Get repositories
-        id: get-repositories
-        run: |
-          CONFIG='${{ steps.config.outputs.config }}'
-          REPOSITORIES=$(echo "$CONFIG" | jq -r '.repository[]' | tr '\n' ' ')
-          echo "repositories=${REPOSITORIES}" >> $GITHUB_OUTPUT
-      
-      - name: Set build matrix
-        id: set-matrix
-        run: |
-          CONFIG='${{ steps.config.outputs.config }}'
-          MATRIX=$(echo "$CONFIG" | jq -c '{include: [.cann[] | {
-            dockerfile: "cann/\(.tags.common[0])/Dockerfile",
-            primary_tag: .tags.common[0],
-            common_tags: .tags.common,
-            ascendhub_tags: .tags.ascendhub
-          }]}' | tr -d '\n')
-          echo "matrix=${MATRIX}" >> $GITHUB_OUTPUT
-
-  build:
-    name: build ${{ matrix.primary_tag }}
-    runs-on: linux-x64-azure
-    needs:
-      - prepare
     strategy:
       fail-fast: false
-      max-parallel: 10
-      matrix: ${{ fromJson(needs.prepare.outputs.matrix) }}
+      matrix:
+        include:
+          
+          - name: "8.1.RC1.alpha001-910b-openeuler22.03-py3.10"
+            context: "cann/8.1.RC1.alpha001-910b-openeuler22.03-py3.10"
+            dockerfile: "Dockerfile"
+            tags: ["docker.io/ascendai/cann:8.1.RC1.alpha001-910b-openeuler22.03-py3.10", "docker.io/ascendai/cann:openeuler-python3.10-cann8.1.RC1.alpha001", "quay.io/ascend/cann:8.1.RC1.alpha001-910b-openeuler22.03-py3.10", "quay.io/ascend/cann:openeuler-python3.10-cann8.1.RC1.alpha001", "swr.cn-southwest-2.myhuaweicloud.com/base_image/cann:8.1.RC1.alpha001-910b-openeuler22.03-py3.10", "swr.cn-southwest-2.myhuaweicloud.com/base_image/cann:openeuler-python3.10-cann8.1.RC1.alpha001", "swr.cn-east-3.myhuaweicloud.com/ascendhub-test/cann:8.1.RC1.alpha001-910b-openeuler22.03-py3.10"]
+          
+          - name: "8.1.RC1.alpha001-910b-ubuntu22.04-py3.10"
+            context: "cann/8.1.RC1.alpha001-910b-ubuntu22.04-py3.10"
+            dockerfile: "Dockerfile"
+            tags: ["docker.io/ascendai/cann:8.1.RC1.alpha001-910b-ubuntu22.04-py3.10", "docker.io/ascendai/cann:8.1.RC1.alpha001", "docker.io/ascendai/cann:latest", "docker.io/ascendai/cann:ubuntu-python3.10-cann8.1.RC1.alpha001", "quay.io/ascend/cann:8.1.RC1.alpha001-910b-ubuntu22.04-py3.10", "quay.io/ascend/cann:8.1.RC1.alpha001", "quay.io/ascend/cann:latest", "quay.io/ascend/cann:ubuntu-python3.10-cann8.1.RC1.alpha001", "swr.cn-southwest-2.myhuaweicloud.com/base_image/cann:8.1.RC1.alpha001-910b-ubuntu22.04-py3.10", "swr.cn-southwest-2.myhuaweicloud.com/base_image/cann:8.1.RC1.alpha001", "swr.cn-southwest-2.myhuaweicloud.com/base_image/cann:latest", "swr.cn-southwest-2.myhuaweicloud.com/base_image/cann:ubuntu-python3.10-cann8.1.RC1.alpha001", "swr.cn-east-3.myhuaweicloud.com/ascendhub-test/cann:8.1.RC1.alpha001-910b-ubuntu22.04-py3.10"]
+          
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -114,28 +89,16 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Extract metadata for Docker
-        id: metadata
-        uses: docker/metadata-action@v5
-        with:
-          bake-target: "docker-metadata-action"
-
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
           platforms: linux/amd64,linux/arm64
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-          file: ${{ matrix.dockerfile }}
-          tags: |
-            ${{ fromJson(needs.prepare.outputs.repositories)[0] }}:{{
-              join(format('{0}', matrix.common_tags), '\n' + fromJson(needs.prepare.outputs.registries)[0] + ':' }}
-            ${{ fromJson(needs.prepare.outputs.repositories)[1] }}:{{
-              join(format('{0}', matrix.ascendhub_tags), '\n' + fromJson(needs.prepare.outputs.registries)[1] + ':' }}
-            ${{ fromJson(needs.prepare.outputs.repositories)[2] }}:{{
-              join(format('{0}', matrix.ascendhub_tags), '\n' + fromJson(needs.prepare.outputs.registries)[2] + ':' }}
-            ${{ fromJson(needs.prepare.outputs.repositories)[3] }}:{{
-              join(format('{0}', matrix.ascendhub_tags), '\n' + fromJson(needs.prepare.outputs.registries)[3] + ':' }}
+          cache-from: type=gha,key=${{ runner.os }}-buildx-${{ matrix.context }}
+          cache-to: type=gha,mode=max,key=${{ runner.os }}-buildx-${{ matrix.context }}
+          context: ${{ github.workspace }}/{{ matrix.context }}
+          file: ${{ github.workspace }}/{{ matrix.context }}/${{ matrix.dockerfile }}
+          tags: ${{ matrix.tags | join(',') }}
+          push: ${{ github.event_name == 'release' }}
 
       - name: Show space
         if: ${{ always() }}

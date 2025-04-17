@@ -1,0 +1,104 @@
+name: Build CANN Images
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - "main"
+    paths:
+      - ".github/workflows/docker.yml"
+      - "cann/**"
+      - "arg.json"
+  pull_request:
+    branches:
+      - "main"
+    paths:
+      - ".github/workflows/docker.yml"
+      - "cann/**"
+      - "arg.json"
+  release:
+    types:
+      - "published"
+
+jobs:
+  build-and-push:
+    name: Build and Push
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          {% for target in targets %}
+          - name: "{{ target.name }}"
+            context: "{{ target.context }}"
+            dockerfile: "{{ target.dockerfile }}"
+            tags: {{ target.tags | tojson }}
+          {% endfor %}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to AscendHub
+        if: {% raw %}${{ github.event_name == 'release' }}{% endraw %}
+        uses: docker/login-action@v3
+        with:
+          registry: swr.cn-east-3.myhuaweicloud.com
+          username: {% raw %}${{ secrets.ASCENDHUB_USERNAME }}{% endraw %}
+          password: {% raw %}${{ secrets.ASCENDHUB_TOKEN }}{% endraw %}
+
+      - name: Login to DockerHub
+        if: {% raw %}${{ github.event_name == 'release' }}{% endraw %}
+        uses: docker/login-action@v3
+        with:
+          registry: docker.io
+          username: {% raw %}${{ secrets.DOCKER_USERNAME }}{% endraw %}
+          password: {% raw %}${{ secrets.DOCKER_TOKEN }}{% endraw %}
+
+      - name: Login to Quay
+        if: {% raw %}${{ github.event_name == 'release' }}{% endraw %}
+        uses: docker/login-action@v3
+        with:
+          registry: quay.io
+          username: {% raw %}${{ secrets.QUAY_USERNAME }}{% endraw %}
+          password: {% raw %}${{ secrets.QUAY_TOKEN }}{% endraw %}
+
+      - name: Login to OpenMind
+        if: {% raw %}${{ github.event_name == 'release' }}{% endraw %}
+        uses: docker/login-action@v3
+        with:
+          registry: swr.cn-southwest-2.myhuaweicloud.com
+          username: {% raw %}${{ secrets.OPENMIND_USERNAME }}{% endraw %}
+          password: {% raw %}${{ secrets.OPENMIND_TOKEN }}{% endraw %}
+
+      - name: Login to ghcr.io
+        if: {% raw %}${{ github.event_name == 'release' }}{% endraw %}
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: {% raw %}${{ github.repository_owner }}{% endraw %}
+          password: {% raw %}${{ secrets.GITHUB_TOKEN }}{% endraw %}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          platforms: linux/amd64,linux/arm64
+          cache-from: type=gha,key={% raw %}${{ runner.os }}-buildx-${{ matrix.context }}{% endraw %}
+          cache-to: type=gha,mode=max,key={% raw %}${{ runner.os }}-buildx-${{ matrix.context }}{% endraw %}
+          context: {% raw %}${{ github.workspace }}/{{ matrix.context }}{% endraw %}
+          file: {% raw %}${{ github.workspace }}/{{ matrix.context }}/${{ matrix.dockerfile }}{% endraw %}
+          tags: {% raw %}${{ matrix.tags | join(',') }}{% endraw %}
+          push: {% raw %}${{ github.event_name == 'release' }}{% endraw %}
+
+      - name: Show space
+        if: {% raw %}${{ always() }}{% endraw %}
+        shell: bash
+        run: |
+          set -x
+          df -h
+          docker images -a
