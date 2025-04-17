@@ -47,12 +47,12 @@ jobs:
         id: set-matrix
         run: |
           CONFIG='${{ steps.config.outputs.config }}'
-          MATRIX=$(echo "$CONFIG" | jq -c '.cann[] | {
+          MATRIX=$(echo "$CONFIG" | jq -c '{include: [.cann[] | {
             dockerfile: "cann/\(.tags.common[0])/Dockerfile",
             primary_tag: .tags.common[0],
             common_tags: .tags.common,
             ascendhub_tags: .tags.ascendhub
-          }' | jq -s . | tr -d '\n')
+          }]}' | tr -d '\n')
           echo "matrix=${MATRIX}" >> $GITHUB_OUTPUT
 
   build:
