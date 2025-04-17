@@ -33,7 +33,8 @@ jobs:
       - name: Load config from file
         id: config
         run: |
-          echo "config=$(cat arg.json)" >> $GITHUB_OUTPUT
+          CONFIG_JSON=$(jq -c . arg.json)
+          echo "config=${CONFIG_JSON}" >> $GITHUB_OUTPUT
       
       - name: Get repositories
         id: get-repositories
