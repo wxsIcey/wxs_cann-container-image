@@ -9,7 +9,6 @@ on:
       - ".github/workflows/docker.yml"
       - "cann/**"
       - "arg.json"
-      - "docker-bake.hcl"
   pull_request:
     branches:
       - "main"
@@ -17,7 +16,6 @@ on:
       - ".github/workflows/docker.yml"
       - "cann/**"
       - "arg.json"
-      - "docker-bake.hcl"
   release:
     types:
       - "published"
@@ -27,29 +25,44 @@ jobs:
     name: prepare
     runs-on: ubuntu-latest
     outputs:
-      targets: ${{ steps.list-target.outputs.targets }}
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: List targets
-        id: list-target
-        uses: docker/bake-action/subaction/list-targets@v6
-        with:
-          files: |
-            arg.json
-            docker-bake.hcl
+      - name: Load config from file
+        id: config
+        run: |
+          echo "config=$(cat arg.json)" >> $GITHUB_OUTPUT
+      
+      - name: Get repositories
+        id: get-repositories
+        run: |
+          CONFIG=${{ steps.config.outputs.config }}
+          REPOSITORIES=$(echo "$CONFIG" | jq -r '.repository')
+          echo "repositories=${REPOSITORIES}" >> $GITHUB_OUTPUT
+      
+      - name: Set build matrix
+        id: set-matrix
+        run: |
+          CONFIG=${{ steps.config.outputs.config }}
+          MATRIX=$(echo "$CONFIG" | jq -r 'map({
+            dockerfile: "cann/(.tags.common[0])/Dockerfile",
+            primary_tag: .tags.common[0],
+            common_tags: .tags.common,
+            ascendhub_tags: .tags.ascendhub,
+          })')
+          echo "matrix=${MATRIX}" >> $GITHUB_OUTPUT
 
-  cann:
-    name: build ${{ matrix.target }}
+  build:
+    name: build ${{ matrix.primary_tag }}
     runs-on: linux-x64-azure
     needs:
       - prepare
     strategy:
       fail-fast: false
       max-parallel: 10
-      matrix:
-        target: ${{ fromJson(needs.prepare.outputs.targets) }}
+        matrix: ${{ fromJson(needs.prepare.outputs.matrix) }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -107,37 +120,21 @@ jobs:
           bake-target: "docker-metadata-action"
 
       - name: Build and push Docker image
-        id: bake
-        uses: docker/bake-action@v6
+        uses: docker/build-push-action@v6
         with:
-          source: .
-          files: |
-            ${{ github.workspace }}/arg.json
-            ${{ github.workspace }}/docker-bake.hcl
-            ${{ steps.metadata.outputs.bake-file-labels }}
-            ${{ steps.metadata.outputs.bake-file-annotations }}
-          targets: ${{ matrix.target }}
-          provenance: false
-          sbom: false
-          push: ${{ github.event_name == 'release' }}
-
-      - name: Export metadata
-        id: export
-        if: ${{ steps.bake.outputs.metadata }}
-        shell: bash
-        run: |
-          METADATA_FILE_NAME="${{ matrix.target }}-metadata.json"
-          echo "metadata-file-name=${METADATA_FILE_NAME}" >> $GITHUB_OUTPUT
-          echo '${{ steps.bake.outputs.metadata }}' > /tmp/${METADATA_FILE_NAME}
-
-      - name: Upload metadata
-        id: upload-artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ steps.export.outputs.metadata-file-name }}
-          path: /tmp/${{ steps.export.outputs.metadata-file-name }}
-          if-no-files-found: error
-          retention-days: 7
+          platforms: linux/amd64,linux/arm64
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          file: ${{ matrix.dockerfile }}
+          tags: |
+            ${{ fromJson(needs.prepare.outputs.repositories)[0] }}:{{
+              join(format('{0}', matrix.common_tags), '\n' + fromJson(needs.prepare.outputs.registries)[0] + ':' }}
+            ${{ fromJson(needs.prepare.outputs.repositories)[1] }}:{{
+              join(format('{0}', matrix.ascendhub_tags), '\n' + fromJson(needs.prepare.outputs.registries)[1] + ':' }}
+            ${{ fromJson(needs.prepare.outputs.repositories)[2] }}:{{
+              join(format('{0}', matrix.ascendhub_tags), '\n' + fromJson(needs.prepare.outputs.registries)[2] + ':' }}
+            ${{ fromJson(needs.prepare.outputs.repositories)[3] }}:{{
+              join(format('{0}', matrix.ascendhub_tags), '\n' + fromJson(needs.prepare.outputs.registries)[3] + ':' }}
 
       - name: Show space
         if: ${{ always() }}
