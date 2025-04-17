@@ -35,12 +35,12 @@ jobs:
         run: |
           CONFIG_JSON=$(jq -c . arg.json)
           echo "config=${CONFIG_JSON}" >> $GITHUB_OUTPUT
-      
+
       - name: Get repositories
         id: get-repositories
         run: |
           CONFIG=${{ steps.config.outputs.config }}
-          REPOSITORIES=$(echo "$CONFIG" | jq -r '.repository[]')
+          REPOSITORIES=$(jq -r '.repository[]' config.json | tr '\n' ' ')
           echo "repositories=${REPOSITORIES}" >> $GITHUB_OUTPUT
       
       - name: Set build matrix
@@ -48,7 +48,7 @@ jobs:
         run: |
           CONFIG=${{ steps.config.outputs.config }}
           MATRIX=$(echo "$CONFIG" | jq -r 'map({
-            dockerfile: "cann/(.tags.common[0])/Dockerfile",
+            dockerfile: "cann/\.tags.common[0])/Dockerfile",
             primary_tag: .tags.common[0],
             common_tags: .tags.common,
             ascendhub_tags: .tags.ascendhub,
