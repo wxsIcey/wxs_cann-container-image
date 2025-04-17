@@ -52,7 +52,7 @@ jobs:
             primary_tag: .tags.common[0],
             common_tags: .tags.common,
             ascendhub_tags: .tags.ascendhub
-          }' | jq -s .)
+          }' | jq -s . | tr -d '\n')
           echo "matrix=${MATRIX}" >> $GITHUB_OUTPUT
 
   build:
