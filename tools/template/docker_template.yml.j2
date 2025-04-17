@@ -92,7 +92,7 @@ jobs:
           cache-to: type=gha,mode=max,key={% raw %}${{ runner.os }}-buildx-${{ matrix.context }}{% endraw %}
           context: {% raw %}${{ github.workspace }}/{{ matrix.context }}{% endraw %}
           file: {% raw %}${{ github.workspace }}/{{ matrix.context }}/${{ matrix.dockerfile }}{% endraw %}
-          tags: {% raw %}${{ matrix.tags | join(',') }}{% endraw %}
+          tags: {% raw %}${{ matrix.tags  }}{% endraw %}
           push: {% raw %}${{ github.event_name == 'release' }}{% endraw %}
 
       - name: Show space
