@@ -39,20 +39,20 @@ jobs:
       - name: Get repositories
         id: get-repositories
         run: |
-          CONFIG=${{ steps.config.outputs.config }}
-          REPOSITORIES=$(jq -r '.repository[]' config.json | tr '\n' ' ')
+          CONFIG='${{ steps.config.outputs.config }}'
+          REPOSITORIES=$(echo "$CONFIG" | jq -r '.repository[]' | tr '\n' ' ')
           echo "repositories=${REPOSITORIES}" >> $GITHUB_OUTPUT
       
       - name: Set build matrix
         id: set-matrix
         run: |
-          CONFIG=${{ steps.config.outputs.config }}
-          MATRIX=$(echo "$CONFIG" | jq -r 'map({
-            dockerfile: "cann/\.tags.common[0])/Dockerfile",
+          CONFIG='${{ steps.config.outputs.config }}'
+          MATRIX=$(echo "$CONFIG" | jq -c '.cann[] | {
+            dockerfile: "cann/\(.tags.common[0])/Dockerfile",
             primary_tag: .tags.common[0],
             common_tags: .tags.common,
-            ascendhub_tags: .tags.ascendhub,
-          })')
+            ascendhub_tags: .tags.ascendhub
+          }' | jq -s .)
           echo "matrix=${MATRIX}" >> $GITHUB_OUTPUT
 
   build:
