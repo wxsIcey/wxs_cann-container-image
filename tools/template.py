@@ -105,7 +105,7 @@ def render_and_save_workflow(args, workflow_template):
             "name": arg['tags']['common'][0],
             "context": os.path.join("cann", arg['tags']['common'][0]),
             "dockerfile": "Dockerfile",
-            "tags": generate_tags(arg["tags"], args["registry"]),
+            "tags": ",".join(generate_tags(arg["tags"], args["registry"])),
         }
         targets.append(target)
         
