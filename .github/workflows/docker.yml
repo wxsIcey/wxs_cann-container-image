@@ -95,8 +95,8 @@ jobs:
           platforms: linux/amd64,linux/arm64
           cache-from: type=gha,key=${{ runner.os }}-buildx-${{ matrix.context }}
           cache-to: type=gha,mode=max,key=${{ runner.os }}-buildx-${{ matrix.context }}
-          context: ${{ github.workspace }}/{{ matrix.context }}
-          file: ${{ github.workspace }}/{{ matrix.context }}/${{ matrix.dockerfile }}
+          context: ${{ github.workspace }}/${{ matrix.context }}
+          file: ${{ github.workspace }}/${{ matrix.context }}/${{ matrix.dockerfile }}
           tags: ${{ matrix.tags  }}
           push: ${{ github.event_name == 'release' }}
 
