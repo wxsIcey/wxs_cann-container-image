@@ -28,9 +28,10 @@ jobs:
             dockerfile: "{{ target.dockerfile }}"
             tags: {{ target.tags | tojson }}
           {% endfor %}
-    uses: ./.github/workflows/main.yml
-    with:
-      context: {% raw %}${{ matrix.context }}{% endraw %}
-      dockerfile: {% raw %}${{ matrix.dockerfile }}{% endraw %}
-      tags: {% raw %}${{ matrix.tags }}{% endraw %}
-    secrets: inherit
+    steps:
+      - name: Run Main Workflow
+        uses: ./.github/workflows/main.yml
+        with:
+          context: {% raw %}${{ matrix.context }}{% endraw %}
+          dockerfile: {% raw %}${{ matrix.dockerfile }}{% endraw %}
+          tags: {% raw %}${{ matrix.tags }}{% endraw %}

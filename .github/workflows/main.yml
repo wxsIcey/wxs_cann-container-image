@@ -1,5 +1,3 @@
-name: Main (Build/Publish)
-
 on:
   workflow_call:
     inputs:
