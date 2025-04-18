@@ -18,7 +18,6 @@ on:
 
 jobs:
   run-build:
-    runs-on: linux-x64-azure
     strategy:
       matrix:
         include:
