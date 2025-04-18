@@ -16,12 +16,6 @@ ALPHA_DICT = {
 
 env = Environment(loader=FileSystemLoader("tools/template"))
 
-def generate_file_prefix(prefix, version, suffix="linux"):
-    return f"{prefix}_{version}_{suffix}"
-
-def generate_url(base_url, path, file_prefix):
-    return f"{base_url}/{path}/{file_prefix}"
-
 def get_python_download_url(version):  
     try:
         response = requests.get("https://www.python.org/ftp/python/")
@@ -51,13 +45,13 @@ def get_cann_download_url(cann_chip, version, nnal_version):
     
     nnal_url_prefix = f"{BASE_URL}/CANN/CANN%20{nnal_version}"
     
-    toolkit_file_prefix = generate_file_prefix("Ascend-cann-toolkit", version)
-    kernels_file_prefix = generate_file_prefix(f"Ascend-cann-kernels-{cann_chip}", version)
-    nnal_file_prefix = generate_file_prefix("Ascend-cann-nnal", nnal_version)
+    toolkit_file_prefix = "Ascend-cann-toolkit_" + version + "_linux"
+    kernels_file_prefix = "Ascend-cann-kernels-" + cann_chip + "_" + version + "_linux"
+    nnal_file_prefix = "Ascend-cann-nnal_" + nnal_version + "_linux"
     
-    cann_toolkit_url_prefix = generate_url(url_prefix, "", toolkit_file_prefix)
-    cann_kernels_url_prefix = generate_url(url_prefix, "", kernels_file_prefix)
-    cann_nnal_url_prefix = generate_url(nnal_url_prefix, "", nnal_file_prefix)
+    cann_toolkit_url_prefix = f"{url_prefix}/{toolkit_file_prefix}"
+    cann_kernels_url_prefix = f"{url_prefix}/{kernels_file_prefix}"   
+    cann_nnal_url_prefix = f"{nnal_url_prefix}/{nnal_file_prefix}"
     
     return cann_toolkit_url_prefix, cann_kernels_url_prefix, cann_nnal_url_prefix
     
