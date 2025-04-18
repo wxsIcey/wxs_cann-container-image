@@ -29,9 +29,9 @@ jobs:
             tags: {{ target.tags | tojson }}
           {% endfor %}
     steps:
-      name: Run Build
-      uses: ./.github/workflows/main.yml
-      with:
-        context: {% raw %}${{ matrix.context }}{% endraw %}
-        dockerfile: {% raw %}${{ matrix.dockerfile }}{% endraw %}
-        tags: {% raw %}${{ matrix.tags }}{% endraw %}
+      - name: Run Build
+        uses: ./.github/workflows/main.yml
+        with:
+          context: {% raw %}${{ matrix.context }}{% endraw %}
+          dockerfile: {% raw %}${{ matrix.dockerfile }}{% endraw %}
+          tags: {% raw %}${{ matrix.tags }}{% endraw %}
