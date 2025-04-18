@@ -33,8 +33,8 @@ jobs:
             dockerfile: "Dockerfile"
             tags: "docker.io/ascendai/cann:8.1.RC1.alpha001-910b-ubuntu22.04-py3.10,docker.io/ascendai/cann:8.1.RC1.alpha001,docker.io/ascendai/cann:latest,docker.io/ascendai/cann:ubuntu-python3.10-cann8.1.RC1.alpha001,quay.io/ascend/cann:8.1.RC1.alpha001-910b-ubuntu22.04-py3.10,quay.io/ascend/cann:8.1.RC1.alpha001,quay.io/ascend/cann:latest,quay.io/ascend/cann:ubuntu-python3.10-cann8.1.RC1.alpha001,swr.cn-southwest-2.myhuaweicloud.com/base_image/cann:8.1.RC1.alpha001-910b-ubuntu22.04-py3.10,swr.cn-southwest-2.myhuaweicloud.com/base_image/cann:8.1.RC1.alpha001,swr.cn-southwest-2.myhuaweicloud.com/base_image/cann:latest,swr.cn-southwest-2.myhuaweicloud.com/base_image/cann:ubuntu-python3.10-cann8.1.RC1.alpha001,swr.cn-east-3.myhuaweicloud.com/ascendhub-test/cann:8.1.RC1.alpha001-910b-ubuntu22.04-py3.10"
           
-      uses: ./.github/workflows/main.yml
-      with:
-        context: ${{ matrix.context }}
-        dockerfile: ${{ matrix.dockerfile }}
-        tags: ${{ matrix.tags }}
+    uses: ./.github/workflows/main.yml
+    with:
+      context: ${{ matrix.context }}
+      dockerfile: ${{ matrix.dockerfile }}
+      tags: ${{ matrix.tags }}

@@ -161,3 +161,5 @@ RUN apt-get update \
 COPY --from=cann-installer /usr/local/python3.10.17 /usr/local/python3.10.17
 COPY --from=cann-installer /usr/local/Ascend /usr/local/Ascend
 COPY --from=cann-installer /etc/Ascend /etc/Ascend
+
+
