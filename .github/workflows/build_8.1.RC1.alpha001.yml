@@ -1,6 +1,7 @@
 name: Build CANN Images (8.1.RC1.alpha001)
 
 on:
+  workflow_dispatch:
   push:
     paths:
       - 'cann/8.1.RC1.alpha001/**'
@@ -16,12 +17,6 @@ on:
       - 'cann/8.1.RC1.alpha001/**'
 
 jobs:
-  prepare:
-    runs-on: linux-x64-azure
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
   run-build:
     runs-on: linux-x64-azure
     strategy:

@@ -1,6 +1,7 @@
 name: Build CANN Images ({{ cann_version }})
 
 on:
+  workflow_dispatch:
   push:
     paths:
       - 'cann/{{ cann_version }}/**'
@@ -16,12 +17,6 @@ on:
       - 'cann/{{ cann_version }}/**'
 
 jobs:
-  prepare:
-    runs-on: linux-x64-azure
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
   run-build:
     runs-on: linux-x64-azure
     strategy:
