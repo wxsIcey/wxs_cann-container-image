@@ -70,8 +70,6 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           platforms: linux/amd64,linux/arm64
-          cache-from: type=gha,key=${{ runner.os }}-buildx-${{ inputs.context }}
-          cache-to: type=gha,mode=max,key=${{ runner.os }}-buildx-${{ inputs.context }}
           context: ${{ github.workspace }}/${{ inputs.context }}
           file: ${{ github.workspace }}/${{ inputs.context }}/${{ inputs.dockerfile }}
           tags: ${{ inputs.tags  }}
