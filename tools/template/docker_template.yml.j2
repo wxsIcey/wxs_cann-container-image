@@ -16,10 +16,15 @@ on:
       - 'cann/{{ cann_version }}/**'
 
 jobs:
+  prepare:
+    runs-on: linux-x64-azure
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
   run-build:
     runs-on: linux-x64-azure
     strategy:
-      fail-fast: false
       matrix:
         include:
           {% for target in targets %}
@@ -28,10 +33,9 @@ jobs:
             dockerfile: "{{ target.dockerfile }}"
             tags: {{ target.tags | tojson }}
           {% endfor %}
-    steps:
-      - name: Run Build
-        uses: ./.github/workflows/main.yml
-        with:
-          context: {% raw %}${{ matrix.context }}{% endraw %}
-          dockerfile: {% raw %}${{ matrix.dockerfile }}{% endraw %}
-          tags: {% raw %}${{ matrix.tags }}{% endraw %}
+    uses: ./.github/workflows/main.yml
+    with:
+      context: {% raw %}${{ matrix.context }}{% endraw %}
+      dockerfile: {% raw %}${{ matrix.dockerfile }}{% endraw %}
+      tags: {% raw %}${{ matrix.tags }}{% endraw %}
+    secrets: inherit
