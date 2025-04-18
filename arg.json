@@ -11,7 +11,7 @@
       "owner": "ascend"
     },
     {
-      "name": "huawei-swr",
+      "name": "openmind",
       "url": "swr.cn-southwest-2.myhuaweicloud.com",
       "owner": "base_image"
     },
