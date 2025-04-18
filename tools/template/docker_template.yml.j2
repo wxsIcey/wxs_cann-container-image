@@ -29,7 +29,6 @@ jobs:
             tags: {{ target.tags | tojson }}
           {% endfor %}
     name: Run
-    secrets: inherit
     uses: ./.github/workflows/main.yml
     with:
       context: {% raw %}${{ matrix.context }}{% endraw %}
