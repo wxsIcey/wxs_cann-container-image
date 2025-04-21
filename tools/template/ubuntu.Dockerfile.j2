@@ -153,6 +153,10 @@ RUN apt-get update \
         bash \
         libc6 \
         libsqlite3-dev \
+        gcc \
+        g++ \
+        make \
+        cmake \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
     && rm -rf /var/tmp/* \

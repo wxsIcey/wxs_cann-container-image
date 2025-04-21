@@ -148,6 +148,10 @@ RUN yum update -y && \
         bash \
         glibc \
         sqlite-devel \
+        gcc \
+        gcc-c++ \
+        make \
+        cmake \
     && yum clean all \
     && rm -rf /var/cache/yum \
     && rm -rf /tmp/*
