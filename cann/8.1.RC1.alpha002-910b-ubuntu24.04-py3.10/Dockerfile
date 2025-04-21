@@ -35,10 +35,10 @@ RUN curl -fsSL https://repo.huaweicloud.com/python/3.10.17/Python-3.10.17.tgz -o
     ./configure --enable-shared --enable-shared LDFLAGS="-Wl,-rpath /usr/local/python3.10.17/lib" --prefix=/usr/local/python3.10.17 && \
     make -j $(nproc) && \
     make altinstall && \
-    ln -sf /usr/local/python3.10.17/bin/python3.10 /usr/local/bin/python3 && \
-    ln -sf /usr/local/python3.10.17/bin/pip3.10 /usr/local/bin/pip3 && \
-    ln -sf /usr/local/python3.10.17/bin/python3 /usr/local/bin/python && \
-    ln -sf /usr/local/python3.10.17/bin/pip3 /usr/local/bin/pip && \
+    ln -sf /usr/local/python3.10.17/bin/python3.10 /usr/local/3.10.17/bin/python3 && \
+    ln -sf /usr/local/python3.10.17/bin/pip3.10 /usr/local/3.10.17/bin/pip3 && \
+    ln -sf /usr/local/python3.10.17/bin/python3 /usr/local/3.10.17/bin/python && \
+    ln -sf /usr/local/python3.10.17/bin/pip3 /usr/local/3.10.17/bin/pip && \
     rm -rf /tmp/*
 
 # Stage 2: Install CANN

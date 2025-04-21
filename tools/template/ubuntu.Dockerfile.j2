@@ -35,10 +35,10 @@ RUN curl -fsSL {{ item.py_installer_url }} -o /tmp/{{ item.py_installer_package 
     ./configure --enable-shared --enable-shared LDFLAGS="-Wl,-rpath /usr/local/python{{ item.py_latest_version }}/lib" --prefix=/usr/local/python{{ item.py_latest_version }} && \
     make -j $(nproc) && \
     make altinstall && \
-    ln -sf /usr/local/python{{ item.py_latest_version }}/bin/python{{ item.py_version }} /usr/local/bin/python3 && \
-    ln -sf /usr/local/python{{ item.py_latest_version }}/bin/pip{{ item.py_version }} /usr/local/bin/pip3 && \
-    ln -sf /usr/local/python{{ item.py_latest_version }}/bin/python3 /usr/local/bin/python && \
-    ln -sf /usr/local/python{{ item.py_latest_version }}/bin/pip3 /usr/local/bin/pip && \
+    ln -sf /usr/local/python{{ item.py_latest_version }}/bin/python{{ item.py_version }} /usr/local/{{ item.py_latest_version }}/bin/python3 && \
+    ln -sf /usr/local/python{{ item.py_latest_version }}/bin/pip{{ item.py_version }} /usr/local/{{ item.py_latest_version }}/bin/pip3 && \
+    ln -sf /usr/local/python{{ item.py_latest_version }}/bin/python3 /usr/local/{{ item.py_latest_version }}/bin/python && \
+    ln -sf /usr/local/python{{ item.py_latest_version }}/bin/pip3 /usr/local/{{ item.py_latest_version }}/bin/pip && \
     rm -rf /tmp/*
 
 # Stage 2: Install CANN
