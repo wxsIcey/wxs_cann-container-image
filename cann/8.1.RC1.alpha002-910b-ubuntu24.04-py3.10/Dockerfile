@@ -162,6 +162,7 @@ COPY --from=cann-installer /usr/local/python3.10.17 /usr/local/python3.10.17
 COPY --from=cann-installer /usr/local/Ascend /usr/local/Ascend
 COPY --from=cann-installer /etc/Ascend /etc/Ascend
 
-RUN source /usr/local/Ascend/ascend-toolkit/set_env.sh && \
-    source /usr/local/Ascend/nnal/atb/set_env.sh
-
+ENTRYPOINT ["/bin/bash", "-c", "\
+    source /usr/local/Ascend/ascend-toolkit/set_env.sh && \
+    source /usr/local/Ascend/nnal/atb/set_env.sh && \
+    exec \"$@\"", "--"]
