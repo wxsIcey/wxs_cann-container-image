@@ -22,6 +22,8 @@
 
 -	[`8.1.RC1.alpha001-910b-openeuler22.03-py3.10`](https://github.com/Ascend/cann-container-image/blob/main/cann/8.1.RC1.alpha001-910b-openeuler22.03-py3.10/Dockerfile)
 -	[`8.1.RC1.alpha001-910b-ubuntu22.04-py3.10`](https://github.com/Ascend/cann-container-image/blob/main/cann/8.1.RC1.alpha001-910b-ubuntu22.04-py3.10/Dockerfile)
+-	[`8.1.RC1.alpha002-910b-openeuler24.03-py3.10`](https://github.com/Ascend/cann-container-image/blob/main/cann/8.1.RC1.alpha002-910b-openeuler24.03-py3.10/Dockerfile)
+-	[`8.1.RC1.alpha002-910b-ubuntu24.04-py3.10`](https://github.com/Ascend/cann-container-image/blob/main/cann/8.1.RC1.alpha002-910b-ubuntu24.04-py3.10/Dockerfile)
 
 # What is CANN?
 
