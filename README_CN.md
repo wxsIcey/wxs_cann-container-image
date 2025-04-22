@@ -1,4 +1,4 @@
-## Quick reference
+## 快速开始
 - 官方的 CANN Ascend docker镜像
 - 如何获取帮助：[Ascend Community](https://www.hiascend.com/forum/)
 
@@ -8,7 +8,6 @@ CANN（Compute Architecture for Neural Networks）是昇腾针对AI场景推出�
 Ascend-CANN镜像，基于Ubuntu OS或openEuler OS，内部集成系统包、Python和CANN （Toolkit开发套件包、Kernels算子包、NNAL加速库）制作。用户根据实际需要，基于该基础镜像安装人工智能框架，即可运行相应业务程序。
 
 ## 支持的tags和相应的Dockerfile链接
-
 每个CANN镜像的tag由CANN版本号和基础镜像版本号组成，具体如下
 
 -	[`8.1.RC1.alpha002-910b-openeuler24.03-py3.10`](https://github.com/Ascend/cann-container-image/blob/main/cann/8.1.RC1.alpha002-910b-openeuler24.03-py3.10/Dockerfile)
@@ -49,12 +48,10 @@ docker run \
 在CANN 8.1.RC1.alpha002及以后版本的镜像中，使用ENV定义ATB的`abi=1`(默认按照没有检测到PyTorch环境处理)，并在以Bash Shell方式启动容器时`source /usr/local/Ascend/nnal/atb/set_env.sh`，确保abi参数的值正确。但若您以其他方式启动容器，abi的值为1，若不满足要求，您可手动自行指定ATB的abi参数值。
 
 ## 问答
-
 若您没有找到想要的CANN镜像或者在使用镜像时发现任何问题，请随时向我们提出[issue](https://github.com/Ascend/cann-container-image/issues)。
 
 
-# 许可证
-
+## 许可证
 [Apache License, Version 2.0](https://github.com/Ascend/cann-container-image/blob/main/LICENSE)
 
 与所有 Docker 镜像一样，这些镜像可能还包含其他可能受其他许可证约束的软件（例如基础发行版中的 Bash 等，以及所包含主要软件的任何直接或间接依赖项）。

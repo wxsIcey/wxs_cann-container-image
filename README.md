@@ -8,7 +8,6 @@ CANN (Compute Architecture for Neural Networks) is a heterogeneous computing arc
 Ascend-CANN image is based on Ubuntu OS or openEuler OS, and integrates system packages, Python and CANN (Toolkit development kit package, Kernels operator package, NNAL acceleration library). Users can install the artificial intelligence framework based on this basic image according to actual needs and run the corresponding business programs.
 
 ## Supported tags and respective Dockerfile links
-
 The tag of each Ascend CANN docker image is consist of the version of CANN and the version of basic image. The details are as follows
 
 -	[`8.1.RC1.alpha002-910b-openeuler24.03-py3.10`](https://github.com/Ascend/cann-container-image/blob/main/cann/8.1.RC1.alpha002-910b-openeuler24.03-py3.10/Dockerfile)
@@ -50,12 +49,10 @@ Configure the abi parameter when executing the CANN environment variable script 
 In CANN 8.1.RC1.alpha002 and later versions of the image, use ENV to define ATB's `abi=1` (by default, it is processed as if no PyTorch environment is detected), and re-source `/usr/local/Ascend/nnal/atb/set_env.sh` when starting the container in Bash Shell mode to ensure that the value of the abi parameter is correct. However, if you start the container in other ways, the value of abi is 1. If it does not meet the requirements, you can manually specify the abi parameter value of ATB.
 
 ## Question and answering
-
 If you don't find the CANN image you want or find any problems when using the image, please feel free to file an [issue](https://github.com/Ascend/cann-container-image/issues).
 
 
-# License
-
+## License
 [Apache License, Version 2.0](https://github.com/Ascend/cann-container-image/blob/main/LICENSE)
 
 As with all Docker images, these images may also contain other software that may be subject to other licenses (such as Bash in the base distribution, and any direct or indirect dependencies of the included main software).
