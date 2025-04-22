@@ -1,5 +1,5 @@
 ## Quick reference
-- The offical CANN Ascend docker images
+- The offical Ascend CANN docker images
 - Where to get help: [Ascend Community](https://www.hiascend.com/forum/)
 
 ## CANN
@@ -9,7 +9,7 @@ Ascend-CANN image is based on Ubuntu OS or openEuler OS, and integrates system p
 
 ## Supported tags and respective Dockerfile links
 
-The tag of each CANN Ascend docker image is consist of the version of CANN and the version of basic image. The details are as follows
+The tag of each Ascend CANN docker image is consist of the version of CANN and the version of basic image. The details are as follows
 
 -	[`8.1.RC1.alpha002-910b-openeuler24.03-py3.10`](https://github.com/Ascend/cann-container-image/blob/main/cann/8.1.RC1.alpha002-910b-openeuler24.03-py3.10/Dockerfile)
 -	[`8.1.RC1.alpha002-910b-ubuntu24.04-py3.10`](https://github.com/Ascend/cann-container-image/blob/main/cann/8.1.RC1.alpha002-910b-ubuntu24.04-py3.10/Dockerfile)
