@@ -51,7 +51,7 @@ In CANN 8.1.RC1.alpha002 and later versions of the image, use ENV to define ATB'
 
 ## Question and answering
 
-If you don't find the CANN image you want or find any problems when using the image, please feel free to file an [issue](https://github.com/Ascend/cann-container-image/issues)。
+If you don't find the CANN image you want or find any problems when using the image, please feel free to file an [issue](https://github.com/Ascend/cann-container-image/issues).
 
 
 # License
