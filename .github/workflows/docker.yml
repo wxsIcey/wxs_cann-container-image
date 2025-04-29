@@ -44,8 +44,8 @@ jobs:
       - name: Create matrix
         id: list-platform
         run: |
-          echo "matrix=$(docker buildx bake cann --print | jq -cr '.target."image-all".platforms')" >>${GITHUB_OUTPUT}
-          echo "matrix=$(docker buildx bake cann --print | jq -cr '.target."image-all".platforms')"
+          echo "matrix=$(docker buildx bake image-all --print | jq -cr '.target."image-all".platforms')" >>${GITHUB_OUTPUT}
+          echo "matrix=$(docker buildx bake image-all --print | jq -cr '.target."image-all".platforms')"
 
   cann:
     name: build ${{ matrix.target }}-${{ matrix.runner }}
