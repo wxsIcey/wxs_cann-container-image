@@ -84,17 +84,17 @@ RUN ARCH=$(case "${TARGETPLATFORM}" in \
     wget ${CANN_KERNELS_URL} -O ~/Ascend-cann-kernels.run && \
     wget ${CANN_NNAL_URL} -O ~/Ascend-cann-nnal.run
 
-# Note: install CANN Toolkit Development Kit Package
+# Note: Install CANN Toolkit Development Kit Package
 RUN chmod +x ~/Ascend-cann-toolkit.run && \
     ~/Ascend-cann-toolkit.run --quiet --install --install-for-all && \
     rm -f ~/Ascend-cann-toolkit.run
 
-# Note: install CANN Kernels Operator Package
+# Note: Install CANN Kernels Operator Package
 RUN chmod +x ~/Ascend-cann-kernels.run && \
     ~/Ascend-cann-kernels.run --quiet --install --install-for-all && \
     rm -f ~/Ascend-cann-kernels.run
 
-# Note: install CANN NNAL Neural Network Acceleration Library
+# Note: Install CANN NNAL Neural Network Acceleration Library
 RUN . /usr/local/Ascend/ascend-toolkit/set_env.sh && \
     chmod +x ~/Ascend-cann-nnal.run && \
     ~/Ascend-cann-nnal.run --quiet --install --install-for-all && \
