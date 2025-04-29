@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - "main"
+      - "add_runner"
     paths:
       - ".github/workflows/docker.yml"
       - "cann/**"
