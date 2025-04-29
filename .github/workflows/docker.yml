@@ -28,6 +28,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       targets: ${{ steps.list-target.outputs.targets }}
+      platforms: ${{ steps.list-platform.outputs.platforms }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -40,9 +41,15 @@ jobs:
             arg.json
             docker-bake.hcl
 
+      - name: Create matrix
+        id: list-platform
+        run: |
+          echo "matrix=$(docker buildx bake cann --print | jq -cr '.target."cann".platforms')" >>${GITHUB_OUTPUT}
+          echo "matrix=$(docker buildx bake cann --print | jq -cr '.target."cann".platforms')"
+
   cann:
-    name: build ${{ matrix.target }}
-    runs-on: linux-x64-azure
+    name: build ${{ matrix.target }}-${{ matrix.runner }}
+    runs-on: ${{ matrix.runner }}
     needs:
       - prepare
     strategy:
@@ -50,7 +57,18 @@ jobs:
       max-parallel: 10
       matrix:
         target: ${{ fromJson(needs.prepare.outputs.targets) }}
+        platform: ${{ fromJson(needs.prepare.outputs.platforms) }}
+        include:
+          - platform: linux/amd64
+            runner: linux-x86_64
+          - platform: linux/arm64
+            runner: linux-aarch64
     steps:
+      - name: Prepare
+        run: |
+          platform=${{ matrix.platform }}
+          echo "PLATFORM_PAIR=${platform//\//-}" >> $GITHUB_ENV
+
       - name: Checkout
         uses: actions/checkout@v4
 
@@ -119,30 +137,87 @@ jobs:
           targets: ${{ matrix.target }}
           provenance: false
           sbom: false
-          push: ${{ github.event_name == 'release' }}
+          set: |
+            *.tags=$(docker buildx bake cann --print | jq -r '.target[].tags[] | split(":")[0]' | sort -u | jq -R -s -c 'split("\n")[:-1]')
+            *.platform=${{ matrix.platform }}
+            *.output=type=image,push-by-digest=true,name-canonical=true,push=true
+          run: |
+            echo "Extracted tags: $(docker buildx bake cann --print | jq -r '.target[].tags[] | split(":")[0]' | sort -u | jq -R -s -c 'split("\n")[:-1]')"
 
-      - name: Export metadata
-        id: export
-        if: ${{ steps.bake.outputs.metadata }}
-        shell: bash
+      - name: Export digest
         run: |
-          METADATA_FILE_NAME="${{ matrix.target }}-metadata.json"
-          echo "metadata-file-name=${METADATA_FILE_NAME}" >> $GITHUB_OUTPUT
-          echo '${{ steps.bake.outputs.metadata }}' > /tmp/${METADATA_FILE_NAME}
+          mkdir -p ${{ runner.temp }}/digests
+          digest="${{ steps.build.outputs.digest }}"
+          touch "${{ runner.temp }}/digests/${digest#sha256:}"
 
-      - name: Upload metadata
-        id: upload-artifact
+      - name: Upload digest
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ steps.export.outputs.metadata-file-name }}
-          path: /tmp/${{ steps.export.outputs.metadata-file-name }}
+          name: digests-${{ matrix.target }}-${{ env.PLATFORM_PAIR }}
+          path: ${{ runner.temp }}/digests/*
           if-no-files-found: error
-          retention-days: 7
+          retention-days: 1
 
-      - name: Show space
-        if: ${{ always() }}
-        shell: bash
+  merge:
+    runs-on: ubuntu-latest
+    needs:
+      - cann
+    steps:
+      - name: Download digests
+        uses: actions/download-artifact@v4
+        with:
+          path: ${{ runner.temp }}/digests
+          pattern: digests-${{ matrix.target }}-*
+          merge-multiple: true
+      
+      - name: Login to AscendHub
+        if: ${{ github.event_name == 'release' }}
+        uses: docker/login-action@v3
+        with:
+          registry: swr.cn-east-3.myhuaweicloud.com
+          username: ${{ secrets.ASCENDHUB_USERNAME }}
+          password: ${{ secrets.ASCENDHUB_TOKEN }}
+
+      - name: Login to DockerHub
+        if: ${{ github.event_name == 'release' }}
+        uses: docker/login-action@v3
+        with:
+          registry: docker.io
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_TOKEN }}
+
+      - name: Login to Quay
+        if: ${{ github.event_name == 'release' }}
+        uses: docker/login-action@v3
+        with:
+          registry: quay.io
+          username: ${{ secrets.QUAY_USERNAME }}
+          password: ${{ secrets.QUAY_TOKEN }}
+
+      - name: Login to OpenMind
+        if: ${{ github.event_name == 'release' }}
+        uses: docker/login-action@v3
+        with:
+          registry: swr.cn-southwest-2.myhuaweicloud.com
+          username: ${{ secrets.OPENMIND_USERNAME }}
+          password: ${{ secrets.OPENMIND_TOKEN }}
+
+      - name: Login to ghcr.io
+        if: ${{ github.event_name == 'release' }}
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create manifest list and push
+        working-directory: ${{ runner.temp }}/digests
         run: |
-          set -x
-          df -h
-          docker images -a
+          docker buildx imagetools create $(docker buildx bake cann --print | jq -cr '.target."cann".tags')
+
+
+
+
+  
+
+      
