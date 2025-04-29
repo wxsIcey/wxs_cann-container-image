@@ -36,7 +36,7 @@ target "platforms" {
 }
 
 target "cann" {
-  inherits = ["platforms"]
+  inherits = ["docker-metadata-action"]
   name = replace("cann-${item.tags.common[0]}", ".", "_")
   context = "cann/${item.tags.common[0]}/"
   dockerfile = "Dockerfile"

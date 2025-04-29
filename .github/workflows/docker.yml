@@ -45,7 +45,6 @@ jobs:
         id: list-platform
         run: |
           echo "platforms=$(docker buildx bake platforms --print | jq -cr '.target."platforms".platforms')" >>${GITHUB_OUTPUT}
-          echo "platforms=$(docker buildx bake platforms --print | jq -cr '.target."platforms".platforms')"
 
   cann:
     name: build ${{ matrix.target }}-${{ matrix.runner }}
@@ -138,11 +137,9 @@ jobs:
           provenance: false
           sbom: false
           set: |
-            *.tags=$(docker buildx bake cann --print | jq -r '.target[].tags[] | split(":")[0]' | sort -u | jq -R -s -c 'split("\n")[:-1]')
+            *.tags=$(docker buildx bake -f ${{ github.workspace }}/arg.json -f ${{ github.workspace }}/docker-bake.hcl --print | jq -r '.target[].tags[] | split(":")[0]' | sort -u | jq -R -s -c 'split("\n")[:-1]')
             *.platform=${{ matrix.platform }}
             *.output=type=image,push-by-digest=true,name-canonical=true,push=true
-          run: |
-            echo "Extracted tags: $(docker buildx bake cann --print | jq -r '.target[].tags[] | split(":")[0]' | sort -u | jq -R -s -c 'split("\n")[:-1]')"
 
       - name: Export digest
         run: |
