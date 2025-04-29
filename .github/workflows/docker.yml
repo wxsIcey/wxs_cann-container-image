@@ -137,7 +137,7 @@ jobs:
           provenance: false
           sbom: false
           set: |
-            *.tags=$(docker buildx bake -f ${{ github.workspace }}/arg.json -f ${{ github.workspace }}/docker-bake.hcl --print | jq -r '.target[].tags[] | split(":")[0]' | sort -u | jq -R -s -c 'split("\n")[:-1]')
+            *.tags="quay.io/ascend/cann"
             *.platform=${{ matrix.platform }}
             *.output=type=image,push-by-digest=true,name-canonical=true,push=true
 
