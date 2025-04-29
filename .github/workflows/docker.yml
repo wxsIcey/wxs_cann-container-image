@@ -137,7 +137,7 @@ jobs:
           provenance: false
           sbom: false
           set: |
-            *.tags="quay.io/ascend/cann"
+            *.tags=quay.io/ascend/cann
             *.platform=${{ matrix.platform }}
             *.output=type=image,push-by-digest=true,name-canonical=true,push=true
 
