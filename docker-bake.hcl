@@ -30,8 +30,13 @@ group "default" {
 target "docker-metadata-action" {
 }
 
-target "cann" {
+target "platforms" {
   inherits = ["docker-metadata-action"]
+  platforms = ["linux/amd64", "linux/arm64"]
+}
+
+target "cann" {
+  inherits = ["platforms"]
   name = replace("cann-${item.tags.common[0]}", ".", "_")
   context = "cann/${item.tags.common[0]}/"
   dockerfile = "Dockerfile"
@@ -39,9 +44,4 @@ target "cann" {
     item = cann
   }
   tags = generate_tags("cann", "${item.tags}")
-}
-
-target "image-all" {
-  inherits = ["cann"]
-  platforms = ["linux/amd64", "linux/arm64"]
 }
