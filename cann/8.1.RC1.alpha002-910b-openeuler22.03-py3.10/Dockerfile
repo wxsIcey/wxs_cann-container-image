@@ -1,30 +1,32 @@
 # Stage 1: Install Python
-FROM ubuntu:24.04 AS python-installer
+FROM openeuler/openeuler:22.03 AS python-installer
 
 # Python Environment variables
 ENV PATH=/usr/local/python3.10.17/bin:${PATH}
 
-RUN apt-get update \
-    && DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y \
-        apt-transport-https \
-        ca-certificates \
-        bash \
+RUN yum update -y && \
+    yum install -y \
+        gcc \
+        gcc-c++ \
+        make \
+        cmake \
         curl \
-        build-essential \
-        libssl-dev \
-        zlib1g-dev \
-        libncurses5-dev \
-        libbz2-dev \
-        libreadline-dev \
-        libsqlite3-dev \
-        libffi-dev \
-        libnss3-dev \
-        libgdbm-dev \
-        liblzma-dev \
-        libev-dev \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/* \
-    && rm -rf /var/tmp/* \
+        zlib-devel \
+        bzip2-devel \
+        openssl-devel \
+        ncurses-devel \
+        sqlite-devel \
+        readline-devel \
+        tk-devel \
+        gdbm-devel \
+        libpcap-devel \
+        xz-devel \
+        libev-devel \
+        expat-devel \
+        libffi-devel \
+        systemtap-sdt-devel \
+    && yum clean all \
+    && rm -rf /var/cache/yum \
     && rm -rf /tmp/*
 
 # Install Python
@@ -46,24 +48,24 @@ FROM python-installer AS cann-installer
 
 ARG TARGETPLATFORM
 
-RUN apt-get update && apt-get install --no-install-recommends -y \
-        git \
-        wget \
-        gcc \
-        g++ \
-        make \
-        cmake \
-        zlib1g \
-        openssl \
+RUN yum update -y && \
+    yum install -y \
         unzip \
         pciutils \
         net-tools \
-        libblas-dev \
-        gfortran \
-        patchelf \
-        libblas3 \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+        lapack-devel \
+        gcc-gfortran \
+        util-linux \
+        findutils \
+        wget \
+    && yum clean all \
+    && rm -rf /var/cache/yum
+
+# Note: Install CANN runtime dependencies
+RUN pip install --no-cache-dir --upgrade pip
+RUN pip install --no-cache-dir \
+        attrs cython numpy==1.24.0 decorator sympy cffi pyyaml pathlib2 \
+        psutil protobuf==3.20 scipy requests absl-py
 
 # Note: Get the download link according to ARCH and download the installation package
 RUN ARCH=$(case "${TARGETPLATFORM}" in \
@@ -95,7 +97,7 @@ RUN . /usr/local/Ascend/ascend-toolkit/set_env.sh && \
     rm -f ~/Ascend-cann-nnal.run
     
 # Stage 3: Copy results from previous stages
-FROM ubuntu:24.04 AS official-ubuntu
+FROM openeuler/openeuler:22.03 AS official-openeuler
 
 # Python Environment variables
 ENV PATH=/usr/local/python3.10.17/bin:${PATH}
@@ -146,31 +148,23 @@ ENV LCCL_DETERMINISTIC=0
 
 SHELL [ "/bin/bash", "-c" ]
 
-RUN apt-get update \
-    && DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y \
-        apt-transport-https \
+RUN yum update -y && \
+    yum install -y \
         ca-certificates \
         bash \
-        libc6 \
-        libsqlite3-dev \
+        glibc \
+        sqlite-devel \
         gcc \
-        g++ \
+        gcc-c++ \
         make \
         cmake \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/* \
-    && rm -rf /var/tmp/* \
+    && yum clean all \
+    && rm -rf /var/cache/yum \
     && rm -rf /tmp/*
 
 COPY --from=cann-installer /usr/local/python3.10.17 /usr/local/python3.10.17
 COPY --from=cann-installer /usr/local/Ascend /usr/local/Ascend
 COPY --from=cann-installer /etc/Ascend /etc/Ascend
-
-# Note: Install CANN runtime dependencies
-RUN pip install --no-cache-dir --upgrade pip
-RUN pip install --no-cache-dir \
-        attrs cython numpy==1.24.0 decorator sympy cffi pyyaml pathlib2 \
-        psutil protobuf==3.20 scipy requests absl-py
 
 ENTRYPOINT ["/bin/bash", "-c", "\
     source /usr/local/Ascend/ascend-toolkit/set_env.sh && \
