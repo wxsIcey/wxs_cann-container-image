@@ -23,12 +23,12 @@
   ],
   "cann": [
     {
-      "cann_version": "8.1.rc1",
-      "cann_chip": "atlas-a3",
+      "cann_version": "8.1.RC1",
+      "cann_chip": "Atlas-A3",
       "os_name": "openeuler",
       "os_version": "22.03",
       "py_version": "3.10",
-      "nnal_version": "8.1.rc1",
+      "nnal_version": "8.1.RC1",
       "tags": {
         "common": [
           "8.1.rc1-atlas-a3-openeuler22.03-py3.10"
@@ -39,12 +39,12 @@
       }
     },
     {
-      "cann_version": "8.1.rc1",
-      "cann_chip": "atlas-a3",
+      "cann_version": "8.1.RC1",
+      "cann_chip": "Atlas-A3",
       "os_name": "ubuntu",
       "os_version": "22.04",
       "py_version": "3.10",
-      "nnal_version": "8.1.rc1",
+      "nnal_version": "8.1.RC1",
       "tags": {
         "common": [
           "8.1.rc1-atlas-a3-ubuntu22.04-py3.10"
