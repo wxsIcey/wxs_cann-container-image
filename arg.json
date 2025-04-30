@@ -32,12 +32,12 @@
       "tags": {
         "common": [
           "8.1.RC1-910b-ubuntu22.04-py3.10",
-          "8.1.RC1.alpha002-910b-openeuler24.03-py3.10",
+          "8.1.RC1",
           "latest",
           "ubuntu-python3.10-cann8.1.RC1"
         ],
         "ascendhub": [
-          "8.1.RC1-910b-ubuntu24.04-py3.10"
+          "8.1.RC1-910b-ubuntu22.04-py3.10"
         ]
       }
     },
