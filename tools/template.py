@@ -47,8 +47,12 @@ def get_cann_download_url(cann_chip, version, nnal_version):
     nnal_url_prefix = f"{BASE_URL}/CANN/CANN%20{nnal_version}"
     
     toolkit_file_prefix = "Ascend-cann-toolkit_" + version + "_linux"
-    kernels_file_prefix = "Ascend-cann-kernels-" + cann_chip + "_" + version + "_linux"
     nnal_file_prefix = "Ascend-cann-nnal_" + nnal_version + "_linux"
+    
+    if cann_chip == "Atlas-A3":
+        kernels_file_prefix = cann_chip + "-cann-kernels" + "_" + version + "_linux"
+    else:
+        kernels_file_prefix = "Ascend-cann-kernels-" + cann_chip + "_" + version + "_linux"
     
     cann_toolkit_url_prefix = f"{url_prefix}/{toolkit_file_prefix}"
     cann_kernels_url_prefix = f"{url_prefix}/{kernels_file_prefix}"   

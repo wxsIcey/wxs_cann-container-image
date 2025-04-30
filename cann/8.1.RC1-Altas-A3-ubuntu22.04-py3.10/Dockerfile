@@ -1,32 +1,30 @@
 # Stage 1: Install Python
-FROM openeuler/openeuler:24.03 AS python-installer
+FROM ubuntu:22.04 AS python-installer
 
 # Python Environment variables
 ENV PATH=/usr/local/python3.10.17/bin:${PATH}
 
-RUN yum update -y && \
-    yum install -y \
-        gcc \
-        gcc-c++ \
-        make \
-        cmake \
+RUN apt-get update \
+    && DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y \
+        apt-transport-https \
+        ca-certificates \
+        bash \
         curl \
-        zlib-devel \
-        bzip2-devel \
-        openssl-devel \
-        ncurses-devel \
-        sqlite-devel \
-        readline-devel \
-        tk-devel \
-        gdbm-devel \
-        libpcap-devel \
-        xz-devel \
-        libev-devel \
-        expat-devel \
-        libffi-devel \
-        systemtap-sdt-devel \
-    && yum clean all \
-    && rm -rf /var/cache/yum \
+        build-essential \
+        libssl-dev \
+        zlib1g-dev \
+        libncurses5-dev \
+        libbz2-dev \
+        libreadline-dev \
+        libsqlite3-dev \
+        libffi-dev \
+        libnss3-dev \
+        libgdbm-dev \
+        liblzma-dev \
+        libev-dev \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* \
+    && rm -rf /var/tmp/* \
     && rm -rf /tmp/*
 
 # Install Python
@@ -48,18 +46,24 @@ FROM python-installer AS cann-installer
 
 ARG TARGETPLATFORM
 
-RUN yum update -y && \
-    yum install -y \
+RUN apt-get update && apt-get install --no-install-recommends -y \
+        git \
+        wget \
+        gcc \
+        g++ \
+        make \
+        cmake \
+        zlib1g \
+        openssl \
         unzip \
         pciutils \
         net-tools \
-        lapack-devel \
-        gcc-gfortran \
-        util-linux \
-        findutils \
-        wget \
-    && yum clean all \
-    && rm -rf /var/cache/yum
+        libblas-dev \
+        gfortran \
+        patchelf \
+        libblas3 \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
 # Note: Get the download link according to ARCH and download the installation package
 RUN ARCH=$(case "${TARGETPLATFORM}" in \
@@ -67,9 +71,9 @@ RUN ARCH=$(case "${TARGETPLATFORM}" in \
         "linux/arm64") echo "aarch64" ;; \
         *) echo "Unsupported TARGETPLATFORM: ${TARGETPLATFORM}" && exit 1 ;; \
     esac) && \
-    CANN_TOOLKIT_URL=https://ascend-repo.obs.cn-east-2.myhuaweicloud.com/Milan-ASL/Milan-ASL%20V100R001C21B800TP051/Ascend-cann-toolkit_8.1.RC1.alpha002_linux-${ARCH}.run && \
-    CANN_KERNELS_URL=https://ascend-repo.obs.cn-east-2.myhuaweicloud.com/Milan-ASL/Milan-ASL%20V100R001C21B800TP051/Ascend-cann-kernels-910b_8.1.RC1.alpha002_linux-${ARCH}.run && \
-    CANN_NNAL_URL=https://ascend-repo.obs.cn-east-2.myhuaweicloud.com/CANN/CANN%208.0.0/Ascend-cann-nnal_8.0.0_linux-${ARCH}.run && \
+    CANN_TOOLKIT_URL=https://ascend-repo.obs.cn-east-2.myhuaweicloud.com/CANN/CANN%208.1.RC1/Ascend-cann-toolkit_8.1.RC1_linux-${ARCH}.run && \
+    CANN_KERNELS_URL=https://ascend-repo.obs.cn-east-2.myhuaweicloud.com/CANN/CANN%208.1.RC1/Atlas-A3-cann-kernels_8.1.RC1_linux-${ARCH}.run && \
+    CANN_NNAL_URL=https://ascend-repo.obs.cn-east-2.myhuaweicloud.com/CANN/CANN%208.1.RC1/Ascend-cann-nnal_8.1.RC1_linux-${ARCH}.run && \
     wget ${CANN_TOOLKIT_URL} -O ~/Ascend-cann-toolkit.run && \
     wget ${CANN_KERNELS_URL} -O ~/Ascend-cann-kernels.run && \
     wget ${CANN_NNAL_URL} -O ~/Ascend-cann-nnal.run
@@ -91,7 +95,7 @@ RUN . /usr/local/Ascend/ascend-toolkit/set_env.sh && \
     rm -f ~/Ascend-cann-nnal.run
     
 # Stage 3: Copy results from previous stages
-FROM openeuler/openeuler:24.03 AS official-openeuler
+FROM ubuntu:22.04 AS official-ubuntu
 
 # Python Environment variables
 ENV PATH=/usr/local/python3.10.17/bin:${PATH}
@@ -142,18 +146,20 @@ ENV LCCL_DETERMINISTIC=0
 
 SHELL [ "/bin/bash", "-c" ]
 
-RUN yum update -y && \
-    yum install -y \
+RUN apt-get update \
+    && DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y \
+        apt-transport-https \
         ca-certificates \
         bash \
-        glibc \
-        sqlite-devel \
+        libc6 \
+        libsqlite3-dev \
         gcc \
-        gcc-c++ \
+        g++ \
         make \
         cmake \
-    && yum clean all \
-    && rm -rf /var/cache/yum \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* \
+    && rm -rf /var/tmp/* \
     && rm -rf /tmp/*
 
 COPY --from=cann-installer /usr/local/python3.10.17 /usr/local/python3.10.17
