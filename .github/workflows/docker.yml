@@ -42,7 +42,7 @@ jobs:
 
   cann:
     name: build ${{ matrix.target }}
-    runs-on: linux-x86_64_4
+    runs-on: [Linux, X64, linux-x86_64_4]
     needs:
       - prepare
     strategy:
