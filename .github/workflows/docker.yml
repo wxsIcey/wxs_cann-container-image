@@ -200,7 +200,8 @@ jobs:
       - name: Create manifest list and push
         working-directory: ${{ runner.temp }}/digests
         run: |
-          docker buildx imagetools create $(docker buildx bake  --print | jq -cr '.target."cann".tags')
+          docker buildx imagetools create $(jq -cr '.target.${{ matrix.target }}.tags | map("-t " + .) | join(" ")') \
+          $(printf 'quay.io/ascend/cann@sha256:%s ' *)
 
   
 
