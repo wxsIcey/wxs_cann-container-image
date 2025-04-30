@@ -127,15 +127,10 @@ jobs:
         id: bake
         uses: docker/bake-action@v6
         with:
-          source: .
           files: |
             ${{ github.workspace }}/arg.json
             ${{ github.workspace }}/docker-bake.hcl
-            ${{ steps.metadata.outputs.bake-file-labels }}
-            ${{ steps.metadata.outputs.bake-file-annotations }}
           targets: ${{ matrix.target }}
-          provenance: false
-          sbom: false
           set: |
             *.tags=quay.io/ascend/cann
             *.platform=${{ matrix.platform }}
@@ -156,6 +151,11 @@ jobs:
           retention-days: 1
 
   merge:
+    strategy:
+      fail-fast: false
+      max-parallel: 10
+      matrix:
+        target: ${{ fromJson(needs.prepare.outputs.targets) }}
     runs-on: ubuntu-latest
     needs:
       - cann
@@ -210,10 +210,7 @@ jobs:
       - name: Create manifest list and push
         working-directory: ${{ runner.temp }}/digests
         run: |
-          docker buildx imagetools create $(docker buildx bake cann --print | jq -cr '.target."cann".tags')
-
-
-
+          docker buildx imagetools create $(docker buildx bake  --print | jq -cr '.target."cann".tags')
 
   
 
