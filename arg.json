@@ -31,9 +31,11 @@
       "nnal_version": "8.1.RC1",
       "tags": {
         "common": [
+          "8.1.rc1-a3-openeuler22.03-py3.10",
           "8.1.rc1-atlas-a3-openeuler22.03-py3.10"
         ],
         "ascendhub": [
+          "8.1.rc1-a3-openeuler22.03-py3.10",
           "8.1.rc1-atlas-a3-openeuler22.03-py3.10"
         ]
       }
@@ -47,9 +49,11 @@
       "nnal_version": "8.1.RC1",
       "tags": {
         "common": [
+          "8.1.rc1-a3-ubuntu22.04-py3.10",
           "8.1.rc1-atlas-a3-ubuntu22.04-py3.10"
         ],
         "ascendhub": [
+          "8.1.rc1-a3-ubuntu22.04-py3.10",
           "8.1.rc1-atlas-a3-ubuntu22.04-py3.10"
         ]
       }

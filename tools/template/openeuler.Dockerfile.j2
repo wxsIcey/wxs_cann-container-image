@@ -61,6 +61,12 @@ RUN yum update -y && \
     && yum clean all \
     && rm -rf /var/cache/yum
 
+# Note: Install CANN runtime dependencies
+RUN pip install --no-cache-dir --upgrade pip
+RUN pip install --no-cache-dir \
+        attrs cython numpy==1.24.0 decorator sympy cffi pyyaml pathlib2 \
+        psutil protobuf==3.20 scipy requests absl-py
+
 # Note: Get the download link according to ARCH and download the installation package
 RUN ARCH=$(case "${TARGETPLATFORM}" in \
         "linux/amd64") echo "x86_64" ;; \
