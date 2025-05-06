@@ -11,11 +11,10 @@ ALPHA_DICT = {
     "8.0.RC2.alpha002": "V100R001C18SPC805",
     "8.0.RC2.alpha003": "V100R001C18SPC703",
     "8.0.RC3.alpha002": "V100R001C19SPC702",
-    "8.1.RC1.alpha001": "V100R001C21B800TP034",
-    "8.1.RC1.alpha002": "V100R001C21B800TP051",
+    "8.1.RC1.alpha001": "V100R001C21B800TP034"
 }
 
-env = Environment(loader=FileSystemLoader('tools/template'))
+env = Environment(loader=FileSystemLoader("tools/template"))
 
 def get_python_download_url(version):  
     try:
@@ -35,7 +34,7 @@ def get_python_download_url(version):
     py_installer_package = "Python-" + py_latest_version
     py_installer_url = os.path.join("https://repo.huaweicloud.com/python/", py_latest_version, py_installer_package + ".tgz")
     return py_installer_package, py_installer_url, py_latest_version
-
+       
 def get_cann_download_url(cann_chip, version, nnal_version):
     if "alpha" in version:
         if version not in ALPHA_DICT:
@@ -56,7 +55,7 @@ def get_cann_download_url(cann_chip, version, nnal_version):
     
     return cann_toolkit_url_prefix, cann_kernels_url_prefix, cann_nnal_url_prefix
     
-def render_and_save(template_name, item):
+def render_and_save_dockerfile(template_name, item):
     template = env.get_template(template_name)
     
     py_installer_package, py_installer_url, py_latest_version = get_python_download_url(item["py_version"])
@@ -75,24 +74,64 @@ def render_and_save(template_name, item):
     
     rendered_content = template.render(item=item)
     
-    output_path = os.path.join("cann", item['tags']['common'][0], "Dockerfile")
+    output_path = os.path.join(
+        "cann",
+        item["cann_version"],
+        f"{item['cann_chip']}-{item['os_name']}{item['os_version']}-py{item['py_version']}",
+        "Dockerfile"
+    )
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
-    with open(output_path, 'w') as f:
+    with open(output_path, "w") as f:
         f.write(rendered_content)
     print(f"Generated: {output_path}")
 
-def process_args(args, ubuntu_template, openeuler_template):
+def process_dockerfile_args(args, ubuntu_template, openeuler_template):
     for arg in args["cann"]:
         if arg["os_name"] == "ubuntu":
             template = ubuntu_template
         else:
             template = openeuler_template
-        render_and_save(template, arg)
+        render_and_save_dockerfile(template, arg)
+        
+def generate_tags(tags, registry):
+    return [
+        f"{reg['url']}/{reg['owner']}/cann:{tag}"
+        for reg in registry
+        for tag in tags.get(reg["name"], tags["common"])
+    ]
+    
+def generate_targets(args):
+    return [
+        {
+            "name": f"{arg['cann_version']}-{arg['cann_chip']}-{arg['os_name']}{arg['os_version']}-py{arg['py_version']}",
+            "context": os.path.join(
+                "cann", 
+                arg["cann_version"],
+                f"{arg['cann_chip']}-{arg['os_name']}{arg['os_version']}-py{arg['py_version']}"
+            ),
+            "dockerfile": "Dockerfile",
+            "tags": ",".join(generate_tags(arg["tags"], args["registry"])),
+        }
+        for arg in args["cann"]
+    ]
+
+def render_and_save_workflow(args, workflow_template):
+    # 待修改函数
+    targets = generate_targets(args)
+    template = env.get_template(workflow_template)
+    rendered_content = template.render(targets=targets, cann_version=args["cann"][0]["cann_version"])
+    
+    output_path = os.path.join(".github", "workflows", f"build_{args['cann'][0]['cann_version']}.yml")
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
+    with open(output_path, "w") as f:
+        f.write(rendered_content)
+    print(f"Generated: {output_path}")
 
 def main():  
-    with open('arg.json', 'r') as f:
+    with open("arg.json", "r") as f:
         args = json.load(f)
-    process_args(args, 'ubuntu.Dockerfile.j2', 'openeuler.Dockerfile.j2')
+    process_dockerfile_args(args, "ubuntu.Dockerfile.j2", "openeuler.Dockerfile.j2")
+    render_and_save_workflow(args, "docker_template.yml.j2")
 
 
 if __name__ == "__main__":
