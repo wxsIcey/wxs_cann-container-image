@@ -127,7 +127,7 @@ jobs:
             ./docker-bake.hcl
           targets: ${{ matrix.target }}
           set: |
-            *.tags=quay.io/ascend/cann
+            *.tags=quay.io/ascend/cann,docker.io/ascendai/cann
             *.platform=${{ matrix.platform }}
             *.output=type=image,push-by-digest=true,name-canonical=true,push=true
 
@@ -144,7 +144,6 @@ jobs:
           path: ${{ runner.temp }}/digests/*
           if-no-files-found: error
           retention-days: 1
-
   merge:
     strategy:
       fail-fast: false
