@@ -36,3 +36,4 @@ jobs:
           
           swr.cn-east-3.myhuaweicloud.com/ascendhub-test/cann:test_8.1.RC1.alpha001-910b-openeuler22.03-py3.10
           
+    secrets: inherit
