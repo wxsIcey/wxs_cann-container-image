@@ -1,19 +1,9 @@
 {
   "registry": [
     {
-      "name": "dockerhub",
-      "url": "docker.io",
-      "owner": "ascendai"
-    },
-    {
       "name": "quay",
       "url": "quay.io",
       "owner": "ascend"
-    },
-    {
-      "name": "openmind",
-      "url": "swr.cn-southwest-2.myhuaweicloud.com",
-      "owner": "base_image"
     },
     {
       "name": "ascendhub",
@@ -31,11 +21,11 @@
       "nnal_version": "8.0.0",
       "tags": {
         "common": [
-          "8.1.RC1.alpha001-910b-openeuler22.03-py3.10",
-          "openeuler-python3.10-cann8.1.RC1.alpha001"
+          "test_8.1.RC1.alpha001-910b-openeuler22.03-py3.10",
+          "test_openeuler-python3.10-cann8.1.RC1.alpha001"
         ],
         "ascendhub": [
-          "8.1.RC1.alpha001-910b-openeuler22.03-py3.10"
+          "test_8.1.RC1.alpha001-910b-openeuler22.03-py3.10"
         ]
       }
     },
@@ -48,13 +38,11 @@
       "nnal_version": "8.0.0",
       "tags": {
         "common": [
-          "8.1.RC1.alpha001-910b-ubuntu22.04-py3.10",
-          "8.1.RC1.alpha001",
-          "latest",
-          "ubuntu-python3.10-cann8.1.RC1.alpha001"
+          "test_8.1.RC1.alpha001-910b-ubuntu22.04-py3.10",
+          "test_ubuntu-python3.10-cann8.1.RC1.alpha001"
         ],
         "ascendhub": [
-          "8.1.RC1.alpha001-910b-ubuntu22.04-py3.10"
+          "test_8.1.RC1.alpha001-910b-ubuntu22.04-py3.10"
         ]
       }
     },
@@ -67,11 +55,11 @@
       "nnal_version": "8.0.0",
       "tags": {
         "common": [
-          "8.1.RC1.alpha002-910b-openeuler24.03-py3.10",
-          "openeuler-python3.10-cann8.1.RC1.alpha002"
+          "test_8.1.RC1.alpha002-910b-openeuler24.03-py3.10",
+          "test_openeuler-python3.10-cann8.1.RC1.alpha002"
         ],
         "ascendhub": [
-          "8.1.RC1.alpha002-910b-openeuler24.03-py3.10"
+          "test_8.1.RC1.alpha002-910b-openeuler24.03-py3.10"
         ]
       }
     },
@@ -84,13 +72,11 @@
       "nnal_version": "8.0.0",
       "tags": {
         "common": [
-          "8.1.RC1.alpha002-910b-ubuntu24.04-py3.10",
-          "8.1.RC1.alpha002",
-          "latest",
-          "ubuntu-python3.10-cann8.1.RC1.alpha002"
+          "test_8.1.RC1.alpha002-910b-ubuntu24.04-py3.10",
+          "test_ubuntu-python3.10-cann8.1.RC1.alpha002"
         ],
         "ascendhub": [
-          "8.1.RC1.alpha002-910b-ubuntu24.04-py3.10"
+          "test_8.1.RC1.alpha002-910b-ubuntu24.04-py3.10"
         ]
       }
     }
