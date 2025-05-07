@@ -3,8 +3,6 @@ name: Build CANN Images (8.1.RC1.alpha001-910b-ubuntu22.04-py3.10)
 on:
   workflow_dispatch:
   push:
-    paths:
-      - 'cann/8.1.RC1.alpha001-910b-ubuntu22.04-py3.10/**'
   pull_request:
     branches:
       - "main"
