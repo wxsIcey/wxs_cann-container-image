@@ -18,7 +18,7 @@ jobs:
   run-build:
     uses: ./.github/workflows/main.yml
     with:
-        name: "{{ target.name }}"
+        image: "{{ target.name }}"
         context: "{{ target.context }}"
         dockerfile: "{{ target.dockerfile }}"
         repos: |

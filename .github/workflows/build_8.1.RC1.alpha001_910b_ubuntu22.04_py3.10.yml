@@ -18,7 +18,7 @@ jobs:
   run-build:
     uses: ./.github/workflows/main.yml
     with:
-        name: "8.1.RC1.alpha001-910b-ubuntu22.04-py3.10"
+        image: "8.1.RC1.alpha001-910b-ubuntu22.04-py3.10"
         context: "cann/8.1.RC1.alpha001-910b-ubuntu22.04-py3.10"
         dockerfile: "Dockerfile"
         repos: |
