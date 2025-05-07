@@ -16,6 +16,16 @@ on:
       name:
         required: true
         type: string
+    secrets:
+      QUAY_USERNAME:
+        required: true
+      QUAY_TOKEN:
+        required: true
+      ASCENDHUB_USERNAME:
+        required: true
+      ASCENDHUB_TOKEN:
+        required: true
+      
 
 jobs:
   build-cann:
