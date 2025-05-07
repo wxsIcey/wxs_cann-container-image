@@ -11,7 +11,8 @@ ALPHA_DICT = {
     "8.0.RC2.alpha002": "V100R001C18SPC805",
     "8.0.RC2.alpha003": "V100R001C18SPC703",
     "8.0.RC3.alpha002": "V100R001C19SPC702",
-    "8.1.RC1.alpha001": "V100R001C21B800TP034"
+    "8.1.RC1.alpha001": "V100R001C21B800TP034",
+    "8.1.RC1.alpha002": "V100R001C21B800TP051",
 }
 
 env = Environment(loader=FileSystemLoader("tools/template"))
@@ -76,8 +77,7 @@ def render_and_save_dockerfile(template_name, item):
     
     output_path = os.path.join(
         "cann",
-        item["cann_version"],
-        f"{item['cann_chip']}-{item['os_name']}{item['os_version']}-py{item['py_version']}",
+        f"{item['cann_version']}-{item['cann_chip']}-{item['os_name']}{item['os_version']}-py{item['py_version']}",
         "Dockerfile"
     )
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
@@ -106,26 +106,32 @@ def generate_targets(args):
             "name": f"{arg['cann_version']}-{arg['cann_chip']}-{arg['os_name']}{arg['os_version']}-py{arg['py_version']}",
             "context": os.path.join(
                 "cann", 
-                arg["cann_version"],
-                f"{arg['cann_chip']}-{arg['os_name']}{arg['os_version']}-py{arg['py_version']}"
+                f"{arg['cann_version']}-{arg['cann_chip']}-{arg['os_name']}{arg['os_version']}-py{arg['py_version']}"
             ),
             "dockerfile": "Dockerfile",
-            "tags": ",".join(generate_tags(arg["tags"], args["registry"])),
+            # "tags": ",".join(generate_tags(arg["tags"], args["registry"])),
+            "tags": generate_tags(arg["tags"], args["registry"])
         }
         for arg in args["cann"]
     ]
+    
+def generate_repos(args):
+    repos = []
+    for registry in args["registry"]:
+        repos.append(registry["url"] + "/" + registry["owner"] + "/cann")
+    return repos
 
 def render_and_save_workflow(args, workflow_template):
-    # 待修改函数
     targets = generate_targets(args)
-    template = env.get_template(workflow_template)
-    rendered_content = template.render(targets=targets, cann_version=args["cann"][0]["cann_version"])
-    
-    output_path = os.path.join(".github", "workflows", f"build_{args['cann'][0]['cann_version']}.yml")
-    os.makedirs(os.path.dirname(output_path), exist_ok=True)
-    with open(output_path, "w") as f:
-        f.write(rendered_content)
-    print(f"Generated: {output_path}")
+    repos = generate_repos(args)
+    for target in targets:
+        template = env.get_template(workflow_template)
+        rendered_content = template.render(target=target, repos=repos, cann_file=target['name'].replace('-', '_'))
+        output_path = os.path.join(".github", "workflows", f"build_{target['name'].replace('-', '_')}.yml")
+        os.makedirs(os.path.dirname(output_path), exist_ok=True)
+        with open(output_path, "w") as f:
+            f.write(rendered_content)
+        print(f"Generated: {output_path}")
 
 def main():  
     with open("arg.json", "r") as f:

@@ -1,0 +1,52 @@
+name: Build CANN Images (8.1.RC1.alpha002_910b_openeuler24.03_py3.10)
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'cann/8.1.RC1.alpha002_910b_openeuler24.03_py3.10/**'
+  pull_request:
+    branches:
+      - "main"
+    paths:
+      - 'cann/8.1.RC1.alpha002_910b_openeuler24.03_py3.10/**'
+  release:
+    types:
+      - "published"
+    paths:
+      - 'cann/8.1.RC1.alpha002_910b_openeuler24.03_py3.10/**'
+
+jobs:
+  run-build:
+    uses: ./.github/workflows/main.yml
+    with:
+        name: "8.1.RC1.alpha002-910b-openeuler24.03-py3.10"
+        context: "cann/8.1.RC1.alpha002-910b-openeuler24.03-py3.10"
+        dockerfile: "Dockerfile"
+        repos: |
+          
+          docker.io/ascendai/cann
+          
+          quay.io/ascend/cann
+          
+          swr.cn-southwest-2.myhuaweicloud.com/base_image/cann
+          
+          swr.cn-east-3.myhuaweicloud.com/ascendhub-test/cann
+          
+
+        tags: |
+          
+          docker.io/ascendai/cann:8.1.RC1.alpha002-910b-openeuler24.03-py3.10
+          
+          docker.io/ascendai/cann:openeuler-python3.10-cann8.1.RC1.alpha002
+          
+          quay.io/ascend/cann:8.1.RC1.alpha002-910b-openeuler24.03-py3.10
+          
+          quay.io/ascend/cann:openeuler-python3.10-cann8.1.RC1.alpha002
+          
+          swr.cn-southwest-2.myhuaweicloud.com/base_image/cann:8.1.RC1.alpha002-910b-openeuler24.03-py3.10
+          
+          swr.cn-southwest-2.myhuaweicloud.com/base_image/cann:openeuler-python3.10-cann8.1.RC1.alpha002
+          
+          swr.cn-east-3.myhuaweicloud.com/ascendhub-test/cann:8.1.RC1.alpha002-910b-openeuler24.03-py3.10
+          
