@@ -25,15 +25,11 @@ jobs:
           
           quay.io/ascend/cann
           
-          swr.cn-east-3.myhuaweicloud.com/ascendhub-test/cann
-          
 
         tags: |
           
           quay.io/ascend/cann:test_8.1.RC1.alpha001-910b-openeuler22.03-py3.10
           
           quay.io/ascend/cann:test_openeuler-python3.10-cann8.1.RC1.alpha001
-          
-          swr.cn-east-3.myhuaweicloud.com/ascendhub-test/cann:test_8.1.RC1.alpha001-910b-openeuler22.03-py3.10
           
     secrets: inherit
