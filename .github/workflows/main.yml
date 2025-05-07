@@ -26,7 +26,6 @@ on:
       ASCENDHUB_TOKEN:
         required: true
       
-
 jobs:
   build-cann:
     runs-on: ${{ matrix.runner }}
@@ -111,7 +110,6 @@ jobs:
               docker buildx imagetools create -t "$TAG" \
                 $(printf 'quay.io/ascend/cann@sha256:%s ' *)
             done
-  
   
 
 
