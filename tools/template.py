@@ -126,7 +126,7 @@ def render_and_save_workflow(args, workflow_template):
     repos = generate_repos(args)
     for target in targets:
         template = env.get_template(workflow_template)
-        rendered_content = template.render(target=target, repos=repos, cann_file=target['name'].replace('-', '_'))
+        rendered_content = template.render(target=target, repos=repos, cann_file=target['name'])
         output_path = os.path.join(".github", "workflows", f"build_{target['name'].replace('-', '_')}.yml")
         os.makedirs(os.path.dirname(output_path), exist_ok=True)
         with open(output_path, "w") as f:

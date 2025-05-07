@@ -1,20 +1,20 @@
-name: Build CANN Images (8.1.RC1.alpha002_910b_openeuler24.03_py3.10)
+name: Build CANN Images (8.1.RC1.alpha002-910b-openeuler24.03-py3.10)
 
 on:
   workflow_dispatch:
   push:
     paths:
-      - 'cann/8.1.RC1.alpha002_910b_openeuler24.03_py3.10/**'
+      - 'cann/8.1.RC1.alpha002-910b-openeuler24.03-py3.10/**'
   pull_request:
     branches:
       - "main"
     paths:
-      - 'cann/8.1.RC1.alpha002_910b_openeuler24.03_py3.10/**'
+      - 'cann/8.1.RC1.alpha002-910b-openeuler24.03-py3.10/**'
   release:
     types:
       - "published"
     paths:
-      - 'cann/8.1.RC1.alpha002_910b_openeuler24.03_py3.10/**'
+      - 'cann/8.1.RC1.alpha002-910b-openeuler24.03-py3.10/**'
 
 jobs:
   run-build:
