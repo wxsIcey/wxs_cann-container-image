@@ -10,6 +10,12 @@ on:
       tags:
         required: true
         type: string
+      repos:
+        required: true
+        type: string
+      name:
+        required: true
+        type: string
 
 jobs:
   build-cann:
