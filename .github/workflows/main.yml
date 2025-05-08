@@ -24,6 +24,10 @@ on:
         type: string
 
     secrets:
+      DOCKER_USERNAME:
+        required: true
+      DOCKER_TOKEN:
+        required: true
       QUAY_USERNAME:
         required: true
       QUAY_TOKEN:
@@ -69,6 +73,8 @@ jobs:
           registry: docker.io
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_TOKEN }}
+          ecr: false
+          logout: false
 
       - name: Build and push by digest
         uses: docker/build-push-action@v6
@@ -121,6 +127,8 @@ jobs:
           registry: docker.io
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_TOKEN }}
+          ecr: false
+          logout: false
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
