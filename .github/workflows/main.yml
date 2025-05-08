@@ -147,10 +147,10 @@ jobs:
         run: |
           TAGS_ARRAY=($(echo "${{ inputs.common_registry_tags }}" | sed '/^$/d'))
           for TAG in "${TAGS_ARRAY[@]}"; do
-            if [[ "$TAG" == *"quay.io/ascend/cann"* ]]; then
+            if [[ "$TAG" == *"quay.io/wxsicey/cann"* ]]; then
               docker buildx imagetools create -t "$TAG" \
                 $(printf 'quay.io/ascend/cann@sha256:%s ' *)
-            elif [[ "$TAG" == *"docker.io/ascendai/cann"* ]]; then
+            elif [[ "$TAG" == *"docker.io/wxsicey/cann"* ]]; then
               docker buildx imagetools create -t "$TAG" \
                 $(printf 'docker.io/ascendai/cann@sha256:%s ' *)
             else
