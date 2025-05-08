@@ -119,7 +119,7 @@ ENV TOOLCHAIN_HOME=${ASCEND_TOOLKIT_HOME}/toolkit
 ENV ASCEND_HOME_PATH=${ASCEND_TOOLKIT_HOME}
 
 # Note: NNAL Environment variables, obtained from /usr/local/Ascend/nnal/set_env.sh
-ENV ATB_HOME_PATH=/usr/local/Ascend/nnal/atb/latest/atb/cxx_abi_1
+ENV ATB_HOME_PATH=/usr/local/Ascend/nnal/atb/latest/atb/cxx_abi_0
 ENV LD_LIBRARY_PATH=${ATB_HOME_PATH}/lib:${ATB_HOME_PATH}/examples:${ATB_HOME_PATH}/tests/atbopstest:${LD_LIBRARY_PATH}
 ENV PATH=${ATB_HOME_PATH}/bin:$PATH
 ENV ATB_STREAM_SYNC_EVERY_KERNEL_ENABLE=0
