@@ -18,16 +18,20 @@ jobs:
   run-build:
     uses: ./.github/workflows/main.yml
     with:
-        image: "{{ target.name }}"
-        context: "{{ target.context }}"
-        dockerfile: "{{ target.dockerfile }}"
+        target_name: {{ target.name }}
+        context: {{ target.context }}
+        dockerfile: {{ target.dockerfile }}
         repos: |
           {% for repo in repos %}
           {{ repo }}
           {% endfor %}
-
-        tags: |
-          {% for tag in target.tags %}
+        ascend_repo: {{ ascend_repo }}
+        common_registry_tags: |
+          {% for tag in target.common_tags %}
+          {{ tag }}
+          {% endfor %}
+        ascendhub_registry_tags: |
+          {% for tag in target.ascendhub_tags %}
           {{ tag }}
           {% endfor %}
     secrets: inherit

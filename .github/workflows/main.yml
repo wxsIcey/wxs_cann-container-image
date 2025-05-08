@@ -1,21 +1,28 @@
 on:
   workflow_call:
     inputs:
+      target_name:
+        required: true
+        type: string
       context:
         required: true
         type: string
       dockerfile:
         required: true
         type: string
-      tags:
-        required: true
-        type: string
       repos:
         required: true
         type: string
-      image:
+      ascendhub_repo:
         required: true
         type: string
+      common_registry_tags:
+        required: true
+        type: string
+      ascendhub_registry_tags:
+        required: true
+        type: string
+
     secrets:
       QUAY_USERNAME:
         required: true
@@ -74,7 +81,7 @@ jobs:
       - name: Upload digest
         uses: actions/upload-artifact@v4
         with:
-          name: digests-${{ inputs.image }}-${{ matrix.arch }}
+          name: digests-${{ inputs.target_name }}-${{ matrix.arch }}
           path: ${{ runner.temp }}/digests/*
           if-no-files-found: error
           retention-days: 1
@@ -87,7 +94,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           path: ${{ runner.temp }}/digests
-          pattern: digests-${{ inputs.image }}-*
+          pattern: digests-${{ inputs.target_name }}-*
           merge-multiple: true
 
       - name: Login to Quay
@@ -105,10 +112,33 @@ jobs:
       - name: Create manifest list and push
         working-directory: ${{ runner.temp }}/digests
         run: |
-            TAGS_ARRAY=($(echo "${{ inputs.tags }}" | sed '/^$/d'))
+            TAGS_ARRAY=($(echo "${{ inputs.common_registry_tags }}" | sed '/^$/d'))
             for TAG in "${TAGS_ARRAY[@]}"; do
               docker buildx imagetools create -t "$TAG" \
                 $(printf 'quay.io/ascend/cann@sha256:%s ' *)
+            done
+      
+  push-ascendhub:
+    runs-on: ubuntu-latest
+    needs: push-cann
+    steps:
+      - name: Login to AscendHub
+        uses: docker/login-action@v3
+        with:
+          registry: swr.cn-east-3.myhuaweicloud.com
+          username: ${{ secrets.ASCENDHUB_USERNAME }}
+          password: ${{ secrets.ASCENDHUB_TOKEN }}
+          ecr: false
+          logout: false
+
+      - name: Push to AscendHub
+        run: |
+            COMMON_TAGS_ARRAY=($(echo "${{ inputs.common_registry_tags }}" | sed '/^$/d'))
+            ASCENDHUB_TAGS_ARRAY=($(echo "${{ inputs.ascendhub_registry_tags }}" | sed '/^$/d'))
+            docker pull "${COMMON_TAGS_ARRAY[0]}"
+            for TAG in "${ASCENDHUB_TAGS_ARRAY[@]}"; do
+              docker tag "${COMMON_TAGS_ARRAY[0]}" "${TAG}"
+              docker push "${TAG}"
             done
   
 

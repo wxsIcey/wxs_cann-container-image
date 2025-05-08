@@ -4,6 +4,11 @@
       "name": "quay",
       "url": "quay.io",
       "owner": "ascend"
+    },
+    {
+      "name": "ascendhub",
+      "url": "swr.cn-east-3.myhuaweicloud.com",
+      "owner": "ascendhub-test"
     }
   ],
   "cann": [

@@ -55,51 +55,52 @@ def get_cann_download_url(cann_chip, version, nnal_version):
     cann_nnal_url_prefix = f"{nnal_url_prefix}/{nnal_file_prefix}"
     
     return cann_toolkit_url_prefix, cann_kernels_url_prefix, cann_nnal_url_prefix
-    
-def render_and_save_dockerfile(template_name, item):
-    template = env.get_template(template_name)
-    
-    py_installer_package, py_installer_url, py_latest_version = get_python_download_url(item["py_version"])
-    item["py_installer_package"] = py_installer_package
-    item["py_installer_url"] = py_installer_url
-    item["py_latest_version"] = py_latest_version
-    
-    cann_toolkit_url_prefix, cann_kernels_url_prefix, cann_nnal_url_prefix = get_cann_download_url(
-        item["cann_chip"], 
-        item["cann_version"], 
-        item["nnal_version"]
-    )
-    item["cann_toolkit_url_prefix"] = cann_toolkit_url_prefix
-    item["cann_kernels_url_prefix"] = cann_kernels_url_prefix
-    item["cann_nnal_url_prefix"] = cann_nnal_url_prefix
-    
-    rendered_content = template.render(item=item)
-    
-    output_path = os.path.join(
-        "cann",
-        f"{item['cann_version']}-{item['cann_chip']}-{item['os_name']}{item['os_version']}-py{item['py_version']}",
-        "Dockerfile"
-    )
-    os.makedirs(os.path.dirname(output_path), exist_ok=True)
-    with open(output_path, "w") as f:
-        f.write(rendered_content)
-    print(f"Generated: {output_path}")
 
-def process_dockerfile_args(args, ubuntu_template, openeuler_template):
-    for arg in args["cann"]:
-        if arg["os_name"] == "ubuntu":
-            template = ubuntu_template
+def render_and_save_dockerfile(args, ubuntu_template, openeuler_template):
+    for item in args["cann"]:
+        if item["os_name"] == "ubuntu":
+            template_name = ubuntu_template
         else:
-            template = openeuler_template
-        render_and_save_dockerfile(template, arg)
+            template_name = openeuler_template
+        template = env.get_template(template_name)
+        py_installer_package, py_installer_url, py_latest_version = get_python_download_url(item["py_version"])
+        item["py_installer_package"] = py_installer_package
+        item["py_installer_url"] = py_installer_url
+        item["py_latest_version"] = py_latest_version
+        
+        cann_toolkit_url_prefix, cann_kernels_url_prefix, cann_nnal_url_prefix = get_cann_download_url(
+            item["cann_chip"], 
+            item["cann_version"], 
+            item["nnal_version"]
+        )
+        item["cann_toolkit_url_prefix"] = cann_toolkit_url_prefix
+        item["cann_kernels_url_prefix"] = cann_kernels_url_prefix
+        item["cann_nnal_url_prefix"] = cann_nnal_url_prefix
+        
+        rendered_content = template.render(item=item)
+        
+        output_path = os.path.join(
+            "cann",
+            f"{item['cann_version']}-{item['cann_chip']}-{item['os_name']}{item['os_version']}-py{item['py_version']}",
+            "Dockerfile"
+        )
+        os.makedirs(os.path.dirname(output_path), exist_ok=True)
+        with open(output_path, "w") as f:
+            f.write(rendered_content)
+        print(f"Generated: {output_path}")
         
 def generate_tags(tags, registry):
-    return [
-        f"{reg['url']}/{reg['owner']}/cann:{tag}"
-        for reg in registry
-        for tag in tags.get(reg["name"], tags["common"])
-    ]
-    
+    ascendhub_tags = []
+    common_tags = []
+    for reg in registry:
+        if reg["name"] == "ascendhub":
+            for tag in tags["ascendhub"]:
+                ascendhub_tags.append(f"{reg['url']}/{reg['owner']}/cann:{tag}")
+        else:
+            for tag in tags["common"]:
+                common_tags.append(f"{reg['url']}/{reg['owner']}/cann:{tag}")
+    return ascendhub_tags, common_tags
+
 def generate_targets(args):
     return [
         {
@@ -109,24 +110,28 @@ def generate_targets(args):
                 f"{arg['cann_version']}-{arg['cann_chip']}-{arg['os_name']}{arg['os_version']}-py{arg['py_version']}"
             ),
             "dockerfile": "Dockerfile",
-            # "tags": ",".join(generate_tags(arg["tags"], args["registry"])),
-            "tags": generate_tags(arg["tags"], args["registry"])
+            "ascendhub_tags": generate_tags(arg["tags"], args["registry"])[0],
+            "common_tags": generate_tags(arg["tags"], args["registry"])[1]
         }
         for arg in args["cann"]
     ]
     
 def generate_repos(args):
     repos = []
+    ascend_repo = ""
     for registry in args["registry"]:
-        repos.append(registry["url"] + "/" + registry["owner"] + "/cann")
-    return repos
+        if registry["name"] == "ascendhub":
+            ascend_repo = registry["url"] + "/" + registry["owner"] + "/cann"
+        else:
+            repos.append(registry["url"] + "/" + registry["owner"] + "/cann")
+    return repos, ascend_repo
 
 def render_and_save_workflow(args, workflow_template):
     targets = generate_targets(args)
-    repos = generate_repos(args)
+    repos, ascend_repo = generate_repos(args)
     for target in targets:
         template = env.get_template(workflow_template)
-        rendered_content = template.render(target=target, repos=repos, cann_file=target['name'])
+        rendered_content = template.render(target=target, repos=repos, ascend_repo= ascend_repo, cann_file=target['name'])
         output_path = os.path.join(".github", "workflows", f"build_{target['name'].replace('-', '_')}.yml")
         os.makedirs(os.path.dirname(output_path), exist_ok=True)
         with open(output_path, "w") as f:
@@ -136,7 +141,7 @@ def render_and_save_workflow(args, workflow_template):
 def main():  
     with open("arg.json", "r") as f:
         args = json.load(f)
-    process_dockerfile_args(args, "ubuntu.Dockerfile.j2", "openeuler.Dockerfile.j2")
+    render_and_save_dockerfile(args, "ubuntu.Dockerfile.j2", "openeuler.Dockerfile.j2")
     render_and_save_workflow(args, "docker_template.yml.j2")
 
 

@@ -18,18 +18,22 @@ jobs:
   run-build:
     uses: ./.github/workflows/main.yml
     with:
-        image: "8.1.RC1.alpha001-910b-openeuler22.03-py3.10"
-        context: "cann/8.1.RC1.alpha001-910b-openeuler22.03-py3.10"
-        dockerfile: "Dockerfile"
+        target_name: 8.1.RC1.alpha001-910b-openeuler22.03-py3.10
+        context: cann/8.1.RC1.alpha001-910b-openeuler22.03-py3.10
+        dockerfile: Dockerfile
         repos: |
           
           quay.io/ascend/cann
           
-
-        tags: |
+        ascend_repo: swr.cn-east-3.myhuaweicloud.com/ascendhub-test/cann
+        common_registry_tags: |
           
           quay.io/ascend/cann:test_8.1.RC1.alpha001-910b-openeuler22.03-py3.10
           
           quay.io/ascend/cann:test_openeuler-python3.10-cann8.1.RC1.alpha001
+          
+        ascendhub_registry_tags: |
+          
+          swr.cn-east-3.myhuaweicloud.com/ascendhub-test/cann:test_8.1.RC1.alpha001-910b-openeuler22.03-py3.10
           
     secrets: inherit
