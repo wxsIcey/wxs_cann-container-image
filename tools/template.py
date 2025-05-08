@@ -89,7 +89,7 @@ def render_and_save_dockerfile(args, ubuntu_template, openeuler_template):
             f.write(rendered_content)
         print(f"Generated: {output_path}")
         
-def generate_tags(tags, registry):
+def generate_registry_tags(tags, registry):
     ascendhub_tags = []
     common_tags = []
     for reg in registry:
@@ -110,8 +110,9 @@ def generate_targets(args):
                 f"{arg['cann_version']}-{arg['cann_chip']}-{arg['os_name']}{arg['os_version']}-py{arg['py_version']}"
             ),
             "dockerfile": "Dockerfile",
-            "ascendhub_tags": generate_tags(arg["tags"], args["registry"])[0],
-            "common_tags": generate_tags(arg["tags"], args["registry"])[1]
+            "os_name": arg["os_name"],
+            "ascendhub_registry_tags": generate_registry_tags(arg["tags"], args["registry"])[0],
+            "common_registry_tags": generate_registry_tags(arg["tags"], args["registry"])[1]
         }
         for arg in args["cann"]
     ]

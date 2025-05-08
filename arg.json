@@ -1,6 +1,11 @@
 {
   "registry": [
     {
+      "name": "dockerhub",
+      "url": "docker.io",
+      "owner": "ascendai"
+    },
+    {
       "name": "quay",
       "url": "quay.io",
       "owner": "ascend"

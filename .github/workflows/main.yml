@@ -1,36 +1,55 @@
+name: Main (Build/Publish)
+
 on:
   workflow_call:
     inputs:
       target_name:
+        description: 'name of the build target'
         required: true
         type: string
       context:
+        description: 'path to the build context'
         required: true
         type: string
       dockerfile:
+        description: 'file name of the Dockerfile'
         required: true
         type: string
       repos:
+        description: 'name of the repositories'
         required: true
         type: string
       ascendhub_repo:
+        description: 'name of the AscendHub repository'
         required: true
         type: string
       common_registry_tags:
+        description: 'tags of the common registry'
         required: true
         type: string
       ascendhub_registry_tags:
+        description: 'tags of the AscendHub registry'
         required: true
         type: string
 
     secrets:
       QUAY_USERNAME:
+        description: 'Username of the Quay registry'
         required: true
       QUAY_TOKEN:
+        description: 'Token of the Quay registry'
+        required: true
+      DOCKER_USERNAME:
+        description: 'Username of the DockerHub registry'
+        required: true
+      DOCKER_TOKEN:
+        description: 'Token of the DockerHub registry'
         required: true
       ASCENDHUB_USERNAME:
+        description: 'Username of the AscendHub registry'
         required: true
       ASCENDHUB_TOKEN:
+        description: 'Token of the AscendHub registry'
         required: true
       
 jobs:
@@ -61,6 +80,13 @@ jobs:
           password: ${{ secrets.QUAY_TOKEN }}
           ecr: false
           logout: false
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v3
+        with:
+          registry: docker.io
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_TOKEN }}
 
       - name: Build and push by digest
         uses: docker/build-push-action@v6
@@ -106,17 +132,32 @@ jobs:
           ecr: false
           logout: false
 
+      - name: Login to DockerHub
+        uses: docker/login-action@v3
+        with:
+          registry: docker.io
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_TOKEN }}
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
       - name: Create manifest list and push
         working-directory: ${{ runner.temp }}/digests
         run: |
-            TAGS_ARRAY=($(echo "${{ inputs.common_registry_tags }}" | sed '/^$/d'))
-            for TAG in "${TAGS_ARRAY[@]}"; do
+          TAGS_ARRAY=($(echo "${{ inputs.common_registry_tags }}" | sed '/^$/d'))
+          for TAG in "${TAGS_ARRAY[@]}"; do
+            if [[ "$TAG" == *"quay.io/ascend/cann"* ]]; then
               docker buildx imagetools create -t "$TAG" \
                 $(printf 'quay.io/ascend/cann@sha256:%s ' *)
-            done
+            elif [[ "$TAG" == *"docker.io/ascendai/cann"* ]]; then
+              docker buildx imagetools create -t "$TAG" \
+                $(printf 'docker.io/ascendai/cann@sha256:%s ' *)
+            else
+              echo "Error: Unknown registry in TAG: $TAG"
+              exit 1
+            fi
+          done
       
   push-ascendhub:
     runs-on: ubuntu-latest

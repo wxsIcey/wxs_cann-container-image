@@ -1,8 +1,10 @@
-name: {{ cann_file }}
+name: build and push cann_{{ target.os_name }}_based Image
 
 on:
   workflow_dispatch:
   push:
+    paths:
+      - 'cann/{{ cann_file }}/**'
   pull_request:
     branches:
       - "main"
@@ -16,6 +18,7 @@ on:
 
 jobs:
   run-build:
+    name: Build and push {{ target.name }} Image
     uses: ./.github/workflows/main.yml
     with:
         target_name: {{ target.name }}
@@ -27,11 +30,11 @@ jobs:
           {% endfor %}
         ascendhub_repo: {{ ascendhub_repo }}
         common_registry_tags: |
-          {% for tag in target.common_tags %}
+          {% for tag in target.common_registry_tags %}
           {{ tag }}
           {% endfor %}
         ascendhub_registry_tags: |
-          {% for tag in target.ascendhub_tags %}
+          {% for tag in target.ascendhub_registry_tags %}
           {{ tag }}
           {% endfor %}
     secrets: inherit
