@@ -181,8 +181,4 @@ jobs:
               docker tag "${COMMON_TAGS_ARRAY[0]}" "${TAG}"
               docker push "${TAG}"
             done
-  
-
-
-      
 
