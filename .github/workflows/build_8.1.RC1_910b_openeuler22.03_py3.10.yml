@@ -1,4 +1,4 @@
-name: build and push cann_openeuler_based Image
+name: cann_openeuler_based
 
 on:
   workflow_dispatch:

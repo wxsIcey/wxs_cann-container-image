@@ -1,4 +1,4 @@
-name: build and push cann_ubuntu_based Image
+name: cann_ubuntu_based
 
 on:
   workflow_dispatch:
