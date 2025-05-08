@@ -15,7 +15,7 @@ ALPHA_DICT = {
     "8.1.RC1.alpha002": "V100R001C21B800TP051",
 }
 
-env = Environment(loader=FileSystemLoader("tools/template"))
+env = Environment(loader=FileSystemLoader('tools/template'))
 
 def get_python_download_url(version):  
     try:
@@ -35,7 +35,7 @@ def get_python_download_url(version):
     py_installer_package = "Python-" + py_latest_version
     py_installer_url = os.path.join("https://repo.huaweicloud.com/python/", py_latest_version, py_installer_package + ".tgz")
     return py_installer_package, py_installer_url, py_latest_version
-       
+
 def get_cann_download_url(cann_chip, version, nnal_version):
     if "alpha" in version:
         if version not in ALPHA_DICT:
@@ -140,7 +140,7 @@ def render_and_save_workflow(args, workflow_template):
         print(f"Generated: {output_path}")
 
 def main():  
-    with open("arg.json", "r") as f:
+    with open('arg.json', 'r') as f:
         args = json.load(f)
     render_and_save_dockerfile(args, "ubuntu.Dockerfile.j2", "openeuler.Dockerfile.j2")
     render_and_save_workflow(args, "docker_template.yml.j2")
@@ -148,3 +148,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
