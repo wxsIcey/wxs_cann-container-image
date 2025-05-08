@@ -59,9 +59,9 @@ jobs:
         matrix:
           include:
             - arch: x86_64
-              runner: linux-x86_64
+              runner: wxs-linux-x86_64
             - arch: aarch64
-              runner: linux-aarch64
+              runner: wxs-linux-aarch64
     steps:
       - name: Checkout
         uses: actions/checkout@v4
