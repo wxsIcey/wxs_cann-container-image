@@ -1,6 +1,11 @@
 {
   "registry": [
     {
+      "name": "dockerhub",
+      "url": "docker.io",
+      "owner": "ascendai"
+    },
+    {
       "name": "quay",
       "url": "quay.io",
       "owner": "ascend"
@@ -13,36 +18,38 @@
   ],
   "cann": [
     {
-      "cann_version": "8.1.RC1.alpha001",
-      "cann_chip": "910b",
-      "os_name": "openeuler",
-      "os_version": "22.03",
-      "py_version": "3.10",
-      "nnal_version": "8.0.0",
-      "tags": {
-        "common": [
-          "test_8.1.RC1.alpha001-910b-openeuler22.03-py3.10",
-          "test_openeuler-python3.10-cann8.1.RC1.alpha001"
-        ],
-        "ascendhub": [
-          "test_8.1.RC1.alpha001-910b-openeuler22.03-py3.10"
-        ]
-      }
-    },
-    {
-      "cann_version": "8.1.RC1.alpha001",
+      "cann_version": "8.1.RC1",
       "cann_chip": "910b",
       "os_name": "ubuntu",
       "os_version": "22.04",
       "py_version": "3.10",
-      "nnal_version": "8.0.0",
+      "nnal_version": "8.1.RC1",
       "tags": {
         "common": [
-          "test_8.1.RC1.alpha001-910b-ubuntu22.04-py3.10",
-          "test_ubuntu-python3.10-cann8.1.RC1.alpha001"
+          "8.1.rc1-910b-ubuntu22.04-py3.10",
+          "8.1.rc1",
+          "latest",
+          "ubuntu-python3.10-cann8.1.rc1"
         ],
         "ascendhub": [
-          "test_8.1.RC1.alpha001-910b-ubuntu22.04-py3.10"
+          "8.1.rc1-910b-ubuntu22.04-py3.10"
+        ]
+      }
+    },
+    {
+      "cann_version": "8.1.RC1",
+      "cann_chip": "910b",
+      "os_name": "openeuler",
+      "os_version": "22.03",
+      "py_version": "3.10",
+      "nnal_version": "8.1.RC1",
+      "tags": {
+        "common": [
+          "8.1.rc1-910b-openeuler22.03-py3.10",
+          "openeuler-python3.10-cann8.1.rc1"
+        ],
+        "ascendhub": [
+          "8.1.rc1-910b-openeuler22.03-py3.10"
         ]
       }
     }
