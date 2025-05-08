@@ -25,7 +25,7 @@ jobs:
           
           quay.io/ascend/cann
           
-        ascend_repo: swr.cn-east-3.myhuaweicloud.com/ascendhub-test/cann
+        ascendhub_repo: swr.cn-east-3.myhuaweicloud.com/ascendhub-test/cann
         common_registry_tags: |
           
           quay.io/ascend/cann:test_8.1.RC1.alpha001-910b-ubuntu22.04-py3.10

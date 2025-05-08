@@ -118,20 +118,20 @@ def generate_targets(args):
     
 def generate_repos(args):
     repos = []
-    ascend_repo = ""
+    ascendhub_repo = ""
     for registry in args["registry"]:
         if registry["name"] == "ascendhub":
-            ascend_repo = registry["url"] + "/" + registry["owner"] + "/cann"
+            ascendhub_repo = registry["url"] + "/" + registry["owner"] + "/cann"
         else:
             repos.append(registry["url"] + "/" + registry["owner"] + "/cann")
-    return repos, ascend_repo
+    return repos, ascendhub_repo
 
 def render_and_save_workflow(args, workflow_template):
     targets = generate_targets(args)
-    repos, ascend_repo = generate_repos(args)
+    repos, ascendhub_repo = generate_repos(args)
     for target in targets:
         template = env.get_template(workflow_template)
-        rendered_content = template.render(target=target, repos=repos, ascend_repo= ascend_repo, cann_file=target['name'])
+        rendered_content = template.render(target=target, repos=repos, ascendhub_repo=ascendhub_repo, cann_file=target['name'])
         output_path = os.path.join(".github", "workflows", f"build_{target['name'].replace('-', '_')}.yml")
         os.makedirs(os.path.dirname(output_path), exist_ok=True)
         with open(output_path, "w") as f:
