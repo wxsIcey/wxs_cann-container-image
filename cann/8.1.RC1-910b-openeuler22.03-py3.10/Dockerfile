@@ -2,4 +2,3 @@
 FROM openeuler/openeuler:22.03 AS python-installer
 
 
-

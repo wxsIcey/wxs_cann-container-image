@@ -166,7 +166,7 @@ jobs:
       - name: Login to AscendHub
         uses: docker/login-action@v3
         with:
-          registry: swr.cn-east-3.myhuaweicloud.com
+          registry: swr.cn-north-4.myhuaweicloud.com
           username: ${{ secrets.ASCENDHUB_USERNAME }}
           password: ${{ secrets.ASCENDHUB_TOKEN }}
           ecr: false
