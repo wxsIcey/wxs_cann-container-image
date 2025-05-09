@@ -35,11 +35,7 @@ jobs:
           
           docker.io/ascendai/cann:8.1.rc1-910b-openeuler22.03-py3.10
           
-          docker.io/ascendai/cann:openeuler-python3.10-cann8.1.rc1
-          
           quay.io/ascend/cann:8.1.rc1-910b-openeuler22.03-py3.10
-          
-          quay.io/ascend/cann:openeuler-python3.10-cann8.1.rc1
           
         ascendhub_registry_tags: |
           

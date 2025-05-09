@@ -28,8 +28,7 @@
         "common": [
           "8.1.rc1-910b-ubuntu22.04-py3.10",
           "8.1.rc1",
-          "latest",
-          "ubuntu-python3.10-cann8.1.rc1"
+          "latest"
         ],
         "ascendhub": [
           "8.1.rc1-910b-ubuntu22.04-py3.10"
@@ -45,8 +44,7 @@
       "nnal_version": "8.1.RC1",
       "tags": {
         "common": [
-          "8.1.rc1-910b-openeuler22.03-py3.10",
-          "openeuler-python3.10-cann8.1.rc1"
+          "8.1.rc1-910b-openeuler22.03-py3.10"
         ],
         "ascendhub": [
           "8.1.rc1-910b-openeuler22.03-py3.10"

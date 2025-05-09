@@ -39,15 +39,11 @@ jobs:
           
           docker.io/ascendai/cann:latest
           
-          docker.io/ascendai/cann:ubuntu-python3.10-cann8.1.rc1
-          
           quay.io/ascend/cann:8.1.rc1-910b-ubuntu22.04-py3.10
           
           quay.io/ascend/cann:8.1.rc1
           
           quay.io/ascend/cann:latest
-          
-          quay.io/ascend/cann:ubuntu-python3.10-cann8.1.rc1
           
         ascendhub_registry_tags: |
           
