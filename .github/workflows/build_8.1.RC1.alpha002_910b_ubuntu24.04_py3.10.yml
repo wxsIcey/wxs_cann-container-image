@@ -53,4 +53,5 @@ jobs:
           
           swr.cn-east-3.myhuaweicloud.com/ascendhub-test/cann:8.1.RC1.alpha002-910b-ubuntu24.04-py3.10
           
+        event_name: ${{ github.event_name }}
     secrets: inherit
