@@ -37,4 +37,5 @@ jobs:
           {% for tag in target.ascendhub_registry_tags %}
           {{ tag }}
           {% endfor %}
+        event_name: {% raw %}${{ github.event_name }}{% endraw %}
     secrets: inherit

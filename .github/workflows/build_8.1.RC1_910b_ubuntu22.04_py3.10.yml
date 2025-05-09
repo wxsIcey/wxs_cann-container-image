@@ -53,4 +53,5 @@ jobs:
           
           swr.cn-north-4.myhuaweicloud.com/wxs_test/cann:8.1.rc1-910b-ubuntu22.04-py3.10
           
+        event_name: ${{ github.event_name }}
     secrets: inherit
