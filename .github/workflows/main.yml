@@ -65,7 +65,7 @@ jobs:
             - arch: x86_64
               runner: linux-x86_64
             - arch: aarch64
-              runner: linux-aarch64
+              runner: ubuntu-22.04-arm
     steps:
       - name: Checkout
         uses: actions/checkout@v4
