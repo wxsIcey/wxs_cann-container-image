@@ -3,17 +3,17 @@
     {
       "name": "dockerhub",
       "url": "docker.io",
-      "owner": "ascendai"
+      "owner": "wxsicey"
     },
     {
       "name": "quay",
       "url": "quay.io",
-      "owner": "ascend"
+      "owner": "wxsicey"
     },
     {
       "name": "ascendhub",
-      "url": "swr.cn-east-3.myhuaweicloud.com",
-      "owner": "ascendhub-test"
+      "url": "swr.cn-north-4.myhuaweicloud.com",
+      "owner": "wxs_test"
     }
   ],
   "cann": [
