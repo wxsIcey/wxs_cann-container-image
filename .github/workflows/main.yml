@@ -131,21 +131,14 @@ jobs:
       - name: Create manifest list and push
         working-directory: ${{ runner.temp }}/digests
         run: |
-          amd64_digest=$(cat x86_64-digest)
-          arm64_digest=$(cat aarch64-digest)
           TAGS_ARRAY=($(echo "${{ inputs.common_registry_tags }}" | sed '/^$/d'))
           for TAG in "${TAGS_ARRAY[@]}"; do
-             if [[ "$TAG" == *"quay.io/wxsicey/cann"* ]]; then
-              docker buildx imagetools create -t "$TAG" \
-                $(printf 'quay.io/wxsicey/cann@sha256:%s ' *)
-            elif [[ "$TAG" == *"docker.io/wxsicey/cann"* ]]; then
-              docker buildx imagetools create -t "$TAG" \
-                $(printf 'docker.io/wxsicey/cann@sha256:%s ' *)
-            else
-              echo "Error: Unknown registry in TAG: $TAG"
-              exit 1
+            if [[ "$TAG" != *"swr.cn-north-4.myhuaweicloud.com/wxs_test/cann"* ]]; then
+              DIGESTS=$(ls -1 | xargs -I {} sh -c 'cat {} | tr -d "\n"')
+              docker buildx imagetools create -t "$TAG" $(printf '@sha256:%s ' $DIGESTS)
             fi
           done
+          ${{ runner.temp }}/digests
       
   push-ascendhub:
     runs-on: ubuntu-latest
