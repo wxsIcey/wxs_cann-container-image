@@ -130,15 +130,15 @@ jobs:
       - name: Create manifest list and push
         working-directory: ${{ runner.temp }}/digests
         run: |
+          cd ${{ runner.temp }}/digests
           TAGS_ARRAY=($(echo "${{ inputs.common_registry_tags }}" | sed '/^$/d'))
           for TAG in "${TAGS_ARRAY[@]}"; do
             if [[ "$TAG" != *"swr.cn-north-4.myhuaweicloud.com/wxs_test/cann"* ]]; then
-              DIGESTS=$(ls -1 | xargs -I {} sh -c 'echo "@sha256:$(cat {} | tr -d "\n")"')
+              DIGESTS=$(find . -type f -exec cat {} \; | sed 's/^/@sha256:/')
               docker buildx imagetools create -t "$TAG" $DIGESTS
             fi
           done
-          ${{ runner.temp }}/digests
- 
+
   push-ascendhub:
     runs-on: ubuntu-latest
     needs: push-cann
