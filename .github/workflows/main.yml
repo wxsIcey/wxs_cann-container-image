@@ -63,7 +63,7 @@ jobs:
         matrix:
           include:
             - arch: x86_64
-              runner: linux-x86_64_wxs
+              runner: linux_x86_64_wxs
             - arch: aarch64
               runner: ubuntu-22.04-arm
     steps:
