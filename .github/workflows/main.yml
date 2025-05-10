@@ -83,19 +83,16 @@ jobs:
           context: ${{ github.workspace }}/${{ inputs.context }}
           outputs: type=docker
 
-      - name: Export digest
+      - name: Save digest to file
         run: |
-          mkdir -p ${{ runner.temp }}/digests
-          digest="${{ steps.build.outputs.digest }}"
-          echo "${digest}" > "${{ runner.temp }}/digests/${{ matrix.arch }}-digest"
-
-      - name: Upload digest
+          echo "${{ steps.build.outputs.digest }}" > ${{ runner.temp }}/digests/digest-${{ matrix.arch }}.txt
+        shell: bash
+      
+      - name: Upload digest artifact
         uses: actions/upload-artifact@v4
         with:
           name: digests-${{ inputs.target_name }}-${{ matrix.arch }}
-          path: ${{ runner.temp }}/digests/*
-          if-no-files-found: error
-          retention-days: 1
+          path: ${{ runner.temp }}/digests/digest-${{ matrix.arch }}.txt
 
   push-cann:
     runs-on: ubuntu-latest
@@ -131,14 +128,10 @@ jobs:
         working-directory: ${{ runner.temp }}/digests
         run: |
           TAGS_ARRAY=($(echo "${{ inputs.common_registry_tags }}" | sed '/^$/d'))
+          DIGESTS=$(ls -1 | xargs -I {} sh -c 'cat {} | tr -d "\n"')
           for TAG in "${TAGS_ARRAY[@]}"; do
             if [[ "$TAG" != *"swr.cn-north-4.myhuaweicloud.com/wxs_test/cann"* ]]; then
-              DIGESTS=""
-              for FILE in $(find . -type f); do
-                DIGEST=$(cat "$FILE" | tr -d '\n')
-                DIGESTS="$DIGESTS $TAG@sha256:$DIGEST"
-              done
-              docker buildx imagetools create -t "$TAG" $DIGESTS
+              docker buildx imagetools create -t "$TAG" $(printf '@sha256:%s ' $DIGESTS)
             fi
           done
 
