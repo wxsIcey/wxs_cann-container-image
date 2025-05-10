@@ -100,7 +100,6 @@ jobs:
   push-cann:
     runs-on: ubuntu-latest
     needs: build-cann
-    if: inputs.event_name == 'release'
     steps:
       - name: Download digests
         uses: actions/download-artifact@v4
@@ -134,8 +133,8 @@ jobs:
           TAGS_ARRAY=($(echo "${{ inputs.common_registry_tags }}" | sed '/^$/d'))
           for TAG in "${TAGS_ARRAY[@]}"; do
             if [[ "$TAG" != *"swr.cn-north-4.myhuaweicloud.com/wxs_test/cann"* ]]; then
-              DIGESTS=$(ls -1 | xargs -I {} sh -c 'cat {} | tr -d "\n"')
-              docker buildx imagetools create -t "$TAG" $(printf '%s ' $DIGESTS)
+              DIGESTS=$(ls -1 | xargs -I {} sh -c 'echo "@sha256:$(cat {} | tr -d "\n")"')
+              docker buildx imagetools create -t "$TAG" $DIGESTS
             fi
           done
           ${{ runner.temp }}/digests
@@ -143,7 +142,6 @@ jobs:
   push-ascendhub:
     runs-on: ubuntu-latest
     needs: push-cann
-    if: inputs.event_name == 'release'
     steps:
       - name: Login to AscendHub
         uses: docker/login-action@v3
