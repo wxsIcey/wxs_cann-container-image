@@ -28,12 +28,10 @@ jobs:
       - name: Get build matrix
         id: get-build-matrix
         run: |
-          MATRIX=$(jq -c '.cann | map({target: .tags[0],
-              arches: [
-                {arch: "x86_64", runner: "linux_x86_64_wxs"},
-                {arch: "aarch64", runner: "ubuntu-22.04-arm"}
-              ]
-            }) | [.[] | .arches[] as $arch | {target: .target, arch: $arch.arch, runner: $arch.runner}]' build_arg.json)
+          MATRIX=$(jq -c '.cann | map({target: .tags[0], arches: [
+            {arch: "x86_64", runner: "linux_x86_64_wxs"},
+            {arch: "aarch64", runner: "ubuntu-22.04-arm"}
+          ]}) | .[] | .arches[] as $arch | {target: .target, arch: $arch.arch, runner: $arch.runner}' build_arg.json)
           echo "matrix=$MATRIX" >> $GITHUB_OUTPUT
 
   build:
@@ -42,7 +40,7 @@ jobs:
     strategy:
       matrix: 
         target: ${{ fromJson(needs.prepare.outputs.matrix) }}
-        
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
