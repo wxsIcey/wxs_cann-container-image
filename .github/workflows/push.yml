@@ -181,6 +181,8 @@ jobs:
         run: |
           echo "TAGS content: $TAGS"
 
+          readarray -t TAGS_ARRAY <<< "$(echo "$TAGS" | jq -r '.[]')"
+
           for TAG in "${TAGS_ARRAY[@]}"; do
             if [[ "$TAG" == *"quay.io/wxsicey/cann"* ]]; then
               docker buildx imagetools create -t "$TAG" \
