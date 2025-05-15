@@ -97,7 +97,7 @@ jobs:
           tags: |
             docker.io/wxsicey/cann
             quay.io/wxsicey/cann
-            swr.cn-north-4.myhuaweicloud.com/ascendhub-test/cann
+            swr.cn-north-4.myhuaweicloud.com/wxs_test/cann
           file: ${{ github.workspace }}/cann/${{ inputs.cann_tag }}/Dockerfile
           context: ${{ github.workspace }}/cann/${{ inputs.cann_tag }}
           outputs: type=image,push-by-digest=true,name-canonical=true,push=true
@@ -166,7 +166,7 @@ jobs:
               TAGS_ARRAY+="$registry:$tag "
             done
           done
-          TAGS_ARRAY+="swr.cn-north-4.myhuaweicloud.com/ascendhub-test/cann:$FIRST_TAG"
+          TAGS_ARRAY+="swr.cn-north-4.myhuaweicloud.com/wxs_test/cann:$FIRST_TAG"
           
           for TAG in "${TAGS_ARRAY[@]}"; do
             if [[ "$TAG" == *"quay.io/ascend/cann"* ]]; then
@@ -175,9 +175,9 @@ jobs:
             elif [[ "$TAG" == *"docker.io/ascendai/cann"* ]]; then
               docker buildx imagetools create -t "$TAG" \
                 $(printf 'docker.io/ascendai/cann@sha256:%s ' *)
-            elif [[ "$TAG" == *"swr.cn-north-4.myhuaweicloud.com/ascendhub-test/cann"* ]]; then
+            elif [[ "$TAG" == *"swr.cn-north-4.myhuaweicloud.com/wxs_test/cann"* ]]; then
               docker buildx imagetools create -t "$TAG" \
-                $(printf 'swr.cn-north-4.myhuaweicloud.com/ascendhub-test/cann@sha256:%s ' *)
+                $(printf 'swr.cn-north-4.myhuaweicloud.com/wxs_test/cann@sha256:%s ' *)
             else
               echo "Error: Unknown registry in TAG: $TAG"
               exit 1
