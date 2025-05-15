@@ -33,15 +33,14 @@ jobs:
                 {arch: "x86_64", runner: "linux_x86_64_wxs"},
                 {arch: "aarch64", runner: "ubuntu-22.04-arm"}
               ]
-            }) | [.[] | .arches[] as $arch | {target: .target, arch: $arch.arch, runner: $arch.runner}]' build_arg.json)
+            }) | {include: [.[] | .arches[] as $arch | {target: .target, arch: $arch.arch, runner: $arch.runner}]}' build_arg.json)
           echo "matrix=$MATRIX" >> $GITHUB_OUTPUT
-          echo "MATRIX=$MATRIX" >> $GITHUB_ENV
 
   build:
     needs: prepare 
-    runs-on: ${{ matrix.runner }}
     strategy:
       matrix: ${{ fromJson(needs.prepare.outputs.matrix) }}
+    runs-on: ${{ matrix.runner }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
