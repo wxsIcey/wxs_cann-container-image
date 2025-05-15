@@ -6,7 +6,7 @@ on:
     paths:
       - ".github/workflows/build.yml"
       - "cann/**"
-      - "arg.json"
+      - "build_arg.json"
 
   pull_request:
     branches:
@@ -14,7 +14,7 @@ on:
     paths:
       - ".github/workflows/build.yml"
       - "cann/**"
-      - "arg.json"
+      - "build_arg.json"
 
 jobs:
   prepare:
@@ -28,7 +28,7 @@ jobs:
       - name: Get build target
         id: get-build-target
         run: |
-          TARGETS=$(jq -r '.cann[].tags[0]' arg.json | jq -R -s -c 'split("\n")[:-1]')
+          TARGETS=$(jq -r '.cann[].tags[0]' build_arg.json | jq -R -s -c 'split("\n")[:-1]')
           echo "targets=$TARGETS" >> $GITHUB_OUTPUT
 
   build:
@@ -58,7 +58,5 @@ jobs:
           context: ${{ github.workspace }}/cann/${{ matrix.target }}
           outputs: type=image
 
-  
-  
 
 
