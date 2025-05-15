@@ -4,22 +4,23 @@ jobs:
   prepare:
     runs-on: ubuntu-latest
     outputs:
-      matrix: ${{ steps.set-matrix.outputs.matrix }}
+      targets: ${{ steps.get-build-target.outputs.targets }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      
-      - name: Generate build matrix
-        id: set-matrix
+
+      - name: Get build target
+        id: get-build-target
         run: |
-          MATRIX=$(jq -c '[.cann[] | {target_name: .target_name}]' arg.json)
-          echo "matrix=${MATRIX}" >> $GITHUB_OUTPUT
+          TARGET_JSON=$(jq -c '{include: [.cann[].tags[0] | {target: .}]}' arg.json)
+          echo "targets=$TARGET_JSON" >> $GITHUB_OUTPUT
+
   build:
-    needs: prepare
+    needs: prepare 
     runs-on: ${{ matrix.runner }}
     strategy:
-      matrix:
-        config: ${{ fromJson(needs.prepare.outputs.matrix) }}
+      matrix: 
+        target: ${{ fromJson(needs.prepare.outputs.targets) }}
         include:
           - arch: x86_64
             runner: linux_x86_64_wxs
@@ -37,11 +38,9 @@ jobs:
         id: build
         with: 
           platforms: ${{ matrix.arch }}
-          file: ${{ github.workspace }}/cann/${{ inputs.target_name }}/Dockerfile
-          context: ${{ github.workspace }}/cann/${{ inputs.target_name }}
+          file: ${{ github.workspace }}/cann/${{ matrix.target }}/Dockerfile
+          context: ${{ github.workspace }}/cann/${{ matrix.target }}
           outputs: type=image
-
-
 
   
   

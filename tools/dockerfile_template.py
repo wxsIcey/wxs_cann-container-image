@@ -18,7 +18,7 @@ ALPHA_DICT = {
 
 env = Environment(loader=FileSystemLoader('tools/template'))
 
-def get_python_download_url(version):  
+def get_python_download_url(version): 
     try:
         response = requests.get("https://www.python.org/ftp/python/")
         response.raise_for_status()
@@ -88,7 +88,7 @@ def render_and_save_dockerfile(args, ubuntu_template, openeuler_template):
         print(f"Generated: {output_path}")
         
 def main():  
-    with open('tools/arg.json', 'r') as f:
+    with open('arg.json', 'r') as f:
         args = json.load(f)
     render_and_save_dockerfile(args, "ubuntu.Dockerfile.j2", "openeuler.Dockerfile.j2")
 
