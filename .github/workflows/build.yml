@@ -1,0 +1,49 @@
+name: Build CANN Image
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Generate build matrix
+        id: set-matrix
+        run: |
+          MATRIX=$(jq -c '[.cann[] | {target_name: .target_name}]' arg.json)
+          echo "matrix=${MATRIX}" >> $GITHUB_OUTPUT
+  build:
+    needs: prepare
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      matrix:
+        config: ${{ fromJson(needs.prepare.outputs.matrix) }}
+        include:
+          - arch: x86_64
+            runner: linux_x86_64_wxs
+          - arch: aarch64
+            runner: ubuntu-22.04-arm
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build image
+        uses: docker/build-push-action@v6
+        id: build
+        with: 
+          platforms: ${{ matrix.arch }}
+          file: ${{ github.workspace }}/cann/${{ inputs.target_name }}/Dockerfile
+          context: ${{ github.workspace }}/cann/${{ inputs.target_name }}
+          outputs: type=image
+
+
+
+  
+  
+
+

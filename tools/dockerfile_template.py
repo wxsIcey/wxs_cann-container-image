@@ -13,6 +13,7 @@ ALPHA_DICT = {
     "8.0.RC3.alpha002": "V100R001C19SPC702",
     "8.1.RC1.alpha001": "V100R001C21B800TP034",
     "8.1.RC1.alpha002": "V100R001C21B800TP051",
+    "8.2.RC1.alpha001": "V100R001C22B800TP013"
 }
 
 env = Environment(loader=FileSystemLoader('tools/template'))
@@ -36,7 +37,7 @@ def get_python_download_url(version):
     py_installer_url = os.path.join("https://repo.huaweicloud.com/python/", py_latest_version, py_installer_package + ".tgz")
     return py_installer_package, py_installer_url, py_latest_version
 
-def get_cann_download_url(cann_chip, version, nnal_version):
+def get_cann_download_url(cann_chip, version):
     if "alpha" in version:
         if version not in ALPHA_DICT:
             raise ValueError(f"Unsupported version: {version}. Supported versions are: {list(ALPHA_DICT.keys())}")
@@ -44,15 +45,13 @@ def get_cann_download_url(cann_chip, version, nnal_version):
     else:
         url_prefix = f"{BASE_URL}/CANN/CANN%20{version}"
     
-    nnal_url_prefix = f"{BASE_URL}/CANN/CANN%20{nnal_version}"
-    
     toolkit_file_prefix = "Ascend-cann-toolkit_" + version + "_linux"
     kernels_file_prefix = "Ascend-cann-kernels-" + cann_chip + "_" + version + "_linux"
-    nnal_file_prefix = "Ascend-cann-nnal_" + nnal_version + "_linux"
+    nnal_file_prefix = "Ascend-cann-nnal_" + version + "_linux"
     
     cann_toolkit_url_prefix = f"{url_prefix}/{toolkit_file_prefix}"
     cann_kernels_url_prefix = f"{url_prefix}/{kernels_file_prefix}"   
-    cann_nnal_url_prefix = f"{nnal_url_prefix}/{nnal_file_prefix}"
+    cann_nnal_url_prefix = f"{url_prefix}/{nnal_file_prefix}"
     
     return cann_toolkit_url_prefix, cann_kernels_url_prefix, cann_nnal_url_prefix
 
@@ -70,8 +69,7 @@ def render_and_save_dockerfile(args, ubuntu_template, openeuler_template):
         
         cann_toolkit_url_prefix, cann_kernels_url_prefix, cann_nnal_url_prefix = get_cann_download_url(
             item["cann_chip"], 
-            item["cann_version"], 
-            item["nnal_version"]
+            item["cann_version"],
         )
         item["cann_toolkit_url_prefix"] = cann_toolkit_url_prefix
         item["cann_kernels_url_prefix"] = cann_kernels_url_prefix
@@ -90,7 +88,7 @@ def render_and_save_dockerfile(args, ubuntu_template, openeuler_template):
         print(f"Generated: {output_path}")
         
 def main():  
-    with open('arg.json', 'r') as f:
+    with open('tools/arg.json', 'r') as f:
         args = json.load(f)
     render_and_save_dockerfile(args, "ubuntu.Dockerfile.j2", "openeuler.Dockerfile.j2")
 
