@@ -16,7 +16,6 @@ on:
       - "cann/**"
       - "arg.json"
 
-
 jobs:
   prepare:
     runs-on: ubuntu-latest
@@ -29,8 +28,8 @@ jobs:
       - name: Get build target
         id: get-build-target
         run: |
-          TARGET_JSON=$(jq -c '{include: [.cann[].tags[0] | {target: .}]}' arg.json)
-          echo "targets=$TARGET_JSON" >> $GITHUB_OUTPUT
+          TARGETS=$(jq -r '.cann[].tags[0]' arg.json | jq -R -s -c 'split("\n")[:-1]')
+          echo "targets=$TARGETS" >> $GITHUB_OUTPUT
 
   build:
     needs: prepare 
