@@ -16,6 +16,7 @@ on:
       - ".github/workflows/build.yml"
       - "cann/**"
       - "arg.json"
+      
 
 jobs:
   prepare:
