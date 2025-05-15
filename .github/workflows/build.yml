@@ -1,5 +1,22 @@
 name: Build CANN Image
 
+on:
+  push:
+    branches:
+      - "main"
+    paths:
+      - ".github/workflows/build.yml"
+      - "cann/**"
+      - "arg.json"
+
+  pull_request:
+    branches:
+      - "main"
+    paths:
+      - ".github/workflows/build.yml"
+      - "cann/**"
+      - "arg.json"
+
 jobs:
   prepare:
     runs-on: ubuntu-latest
