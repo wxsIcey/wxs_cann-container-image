@@ -17,7 +17,7 @@ on:
           - 8.1.rc1-910b-openeuler22.03-py3.10
 
       publish:
-        description: 'Publish the image or not.'
+        description: 'Publish the image'
         default: false
         type: boolean
         required: true
@@ -196,9 +196,4 @@ jobs:
               exit 1
             fi
           done
-
-
-  
-  
-
 
