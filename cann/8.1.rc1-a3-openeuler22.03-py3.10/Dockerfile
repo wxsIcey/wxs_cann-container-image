@@ -73,24 +73,24 @@ RUN ARCH=$(case "${TARGETPLATFORM}" in \
         "linux/arm64") echo "aarch64" ;; \
         *) echo "Unsupported TARGETPLATFORM: ${TARGETPLATFORM}" && exit 1 ;; \
     esac) && \
-    CANN_TOOLKIT_URL=https://ascend-repo.obs.cn-east-2.myhuaweicloud.com/Milan-ASL/Milan-ASL%20V100R001C22B800TP013/Ascend-cann-toolkit_8.2.RC1.alpha001_linux-${ARCH}.run && \
-    CANN_KERNELS_URL=https://ascend-repo.obs.cn-east-2.myhuaweicloud.com/Milan-ASL/Milan-ASL%20V100R001C22B800TP013/Ascend-cann-kernels-910b_8.2.RC1.alpha001_linux-${ARCH}.run && \
-    CANN_NNAL_URL=https://ascend-repo.obs.cn-east-2.myhuaweicloud.com/Milan-ASL/Milan-ASL%20V100R001C22B800TP013/Ascend-cann-nnal_8.2.RC1.alpha001_linux-${ARCH}.run && \
-    wget --no-verbose --timeout=30 --tries=10 --retry-connrefused ${CANN_TOOLKIT_URL} -O ~/Ascend-cann-toolkit.run && \
-    wget --no-verbose --timeout=30 --tries=10 --retry-connrefused ${CANN_KERNELS_URL} -O ~/Ascend-cann-kernels.run && \
-    wget --no-verbose --timeout=30 --tries=10 --retry-connrefused ${CANN_NNAL_URL} -O ~/Ascend-cann-nnal.run
+    CANN_TOOLKIT_URL=https://ascend-repo.obs.cn-east-2.myhuaweicloud.com/CANN/CANN%208.1.RC1/Ascend-cann-toolkit_8.1.RC1_linux-${ARCH}.run && \
+    CANN_KERNELS_URL=https://ascend-repo.obs.cn-east-2.myhuaweicloud.com/CANN/CANN%208.1.RC1/Atlas-A3-cann-kernels_8.1.RC1_linux-${ARCH}.run && \
+    CANN_NNAL_URL=https://ascend-repo.obs.cn-east-2.myhuaweicloud.com/CANN/CANN%208.1.RC1/Ascend-cann-nnal_8.1.RC1_linux-${ARCH}.run && \
+    wget ${CANN_TOOLKIT_URL} -O ~/Ascend-cann-toolkit.run && \
+    wget ${CANN_KERNELS_URL} -O ~/Ascend-cann-kernels.run && \
+    wget ${CANN_NNAL_URL} -O ~/Ascend-cann-nnal.run
 
-# Note: Install CANN Toolkit Development Kit Package
+# Note: install CANN Toolkit Development Kit Package
 RUN chmod +x ~/Ascend-cann-toolkit.run && \
     ~/Ascend-cann-toolkit.run --quiet --install --install-for-all && \
     rm -f ~/Ascend-cann-toolkit.run
 
-# Note: Install CANN Kernels Operator Package
+# Note: install CANN Kernels Operator Package
 RUN chmod +x ~/Ascend-cann-kernels.run && \
     ~/Ascend-cann-kernels.run --quiet --install --install-for-all && \
     rm -f ~/Ascend-cann-kernels.run
 
-# Note: Install CANN NNAL Neural Network Acceleration Library
+# Note: install CANN NNAL Neural Network Acceleration Library
 RUN . /usr/local/Ascend/ascend-toolkit/set_env.sh && \
     chmod +x ~/Ascend-cann-nnal.run && \
     ~/Ascend-cann-nnal.run --quiet --install --install-for-all && \
@@ -115,7 +115,7 @@ ENV TOOLCHAIN_HOME=${ASCEND_TOOLKIT_HOME}/toolkit
 ENV ASCEND_HOME_PATH=${ASCEND_TOOLKIT_HOME}
 
 # Note: NNAL Environment variables, obtained from /usr/local/Ascend/nnal/set_env.sh
-ENV ATB_HOME_PATH=/usr/local/Ascend/nnal/atb/latest/atb/cxx_abi_0
+ENV ATB_HOME_PATH=/usr/local/Ascend/nnal/atb/latest/atb/cxx_abi_1
 ENV LD_LIBRARY_PATH=${ATB_HOME_PATH}/lib:${ATB_HOME_PATH}/examples:${ATB_HOME_PATH}/tests/atbopstest:${LD_LIBRARY_PATH}
 ENV PATH=${ATB_HOME_PATH}/bin:$PATH
 ENV ATB_STREAM_SYNC_EVERY_KERNEL_ENABLE=0
@@ -137,11 +137,14 @@ ENV ATB_MATMUL_SHUFFLE_K_ENABLE=1
 ENV ATB_RUNNER_POOL_SIZE=64
 ENV ASDOPS_HOME_PATH=${ATB_HOME_PATH}
 ENV ASDOPS_MATMUL_PP_FLAG=1
+ENV ASDOPS_LOG_LEVEL=ERROR
+ENV ASDOPS_LOG_TO_STDOUT=0
+ENV ASDOPS_LOG_TO_FILE=1
+ENV ASDOPS_LOG_TO_FILE_FLUSH=0
 ENV ASDOPS_LOG_TO_BOOST_TYPE=atb
 ENV ASDOPS_LOG_PATH=/root
 ENV ASDOPS_TILING_PARSE_CACHE_DISABLE=0
 ENV LCCL_DETERMINISTIC=0
-ENV LCCL_PARALLEL=0 
 
 SHELL [ "/bin/bash", "-c" ]
 
@@ -162,15 +165,6 @@ RUN yum update -y && \
 COPY --from=cann-installer /usr/local/python3.10.17 /usr/local/python3.10.17
 COPY --from=cann-installer /usr/local/Ascend /usr/local/Ascend
 COPY --from=cann-installer /etc/Ascend /etc/Ascend
-
-# Note: Set environment variables
-RUN \
-    CANN_TOOLKIT_ENV_FILE="/usr/local/Ascend/ascend-toolkit/set_env.sh" && \
-    CANN_NNAL_ENV_FILE="/usr/local/Ascend/nnal/atb/set_env.sh" && \
-    echo "source ${CANN_TOOLKIT_ENV_FILE}" >> /etc/profile && \
-    echo "source ${CANN_TOOLKIT_ENV_FILE}" >> ~/.bashrc && \
-    echo "source ${CANN_NNAL_ENV_FILE}" >> /etc/profile && \
-    echo "source ${CANN_NNAL_ENV_FILE}" >> ~/.bashrc
 
 ENTRYPOINT ["/bin/bash", "-c", "\
     source /usr/local/Ascend/ascend-toolkit/set_env.sh && \

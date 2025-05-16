@@ -76,9 +76,9 @@ RUN ARCH=$(case "${TARGETPLATFORM}" in \
     CANN_TOOLKIT_URL={{ item.cann_toolkit_url_prefix }}-${ARCH}.run && \
     CANN_KERNELS_URL={{ item.cann_kernels_url_prefix }}-${ARCH}.run && \
     CANN_NNAL_URL={{ item.cann_nnal_url_prefix }}-${ARCH}.run && \
-    wget ${CANN_TOOLKIT_URL} -O ~/Ascend-cann-toolkit.run && \
-    wget ${CANN_KERNELS_URL} -O ~/Ascend-cann-kernels.run && \
-    wget ${CANN_NNAL_URL} -O ~/Ascend-cann-nnal.run
+    wget --no-verbose --timeout=30 --tries=10 --retry-connrefused ${CANN_TOOLKIT_URL} -O ~/Ascend-cann-toolkit.run && \
+    wget --no-verbose --timeout=30 --tries=10 --retry-connrefused ${CANN_KERNELS_URL} -O ~/Ascend-cann-kernels.run && \
+    wget --no-verbose --timeout=30 --tries=10 --retry-connrefused ${CANN_NNAL_URL} -O ~/Ascend-cann-nnal.run
 
 # Note: Install CANN Toolkit Development Kit Package
 RUN chmod +x ~/Ascend-cann-toolkit.run && \
@@ -137,10 +137,6 @@ ENV ATB_MATMUL_SHUFFLE_K_ENABLE=1
 ENV ATB_RUNNER_POOL_SIZE=64
 ENV ASDOPS_HOME_PATH=${ATB_HOME_PATH}
 ENV ASDOPS_MATMUL_PP_FLAG=1
-ENV ASDOPS_LOG_LEVEL=ERROR
-ENV ASDOPS_LOG_TO_STDOUT=0
-ENV ASDOPS_LOG_TO_FILE=1
-ENV ASDOPS_LOG_TO_FILE_FLUSH=0
 ENV ASDOPS_LOG_TO_BOOST_TYPE=atb
 ENV ASDOPS_LOG_PATH=/root
 ENV ASDOPS_TILING_PARSE_CACHE_DISABLE=0
@@ -180,4 +176,3 @@ ENTRYPOINT ["/bin/bash", "-c", "\
     source /usr/local/Ascend/ascend-toolkit/set_env.sh && \
     source /usr/local/Ascend/nnal/atb/set_env.sh && \
     exec \"$@\"", "--"]
-

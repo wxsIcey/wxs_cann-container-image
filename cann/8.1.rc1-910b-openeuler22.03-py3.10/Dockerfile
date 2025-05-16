@@ -73,12 +73,12 @@ RUN ARCH=$(case "${TARGETPLATFORM}" in \
         "linux/arm64") echo "aarch64" ;; \
         *) echo "Unsupported TARGETPLATFORM: ${TARGETPLATFORM}" && exit 1 ;; \
     esac) && \
-    CANN_TOOLKIT_URL=https://ascend-repo.obs.cn-east-2.myhuaweicloud.com/Milan-ASL/Milan-ASL%20V100R001C22B800TP013/Ascend-cann-toolkit_8.2.RC1.alpha001_linux-${ARCH}.run && \
-    CANN_KERNELS_URL=https://ascend-repo.obs.cn-east-2.myhuaweicloud.com/Milan-ASL/Milan-ASL%20V100R001C22B800TP013/Ascend-cann-kernels-910b_8.2.RC1.alpha001_linux-${ARCH}.run && \
-    CANN_NNAL_URL=https://ascend-repo.obs.cn-east-2.myhuaweicloud.com/Milan-ASL/Milan-ASL%20V100R001C22B800TP013/Ascend-cann-nnal_8.2.RC1.alpha001_linux-${ARCH}.run && \
-    wget --no-verbose --timeout=30 --tries=10 --retry-connrefused ${CANN_TOOLKIT_URL} -O ~/Ascend-cann-toolkit.run && \
-    wget --no-verbose --timeout=30 --tries=10 --retry-connrefused ${CANN_KERNELS_URL} -O ~/Ascend-cann-kernels.run && \
-    wget --no-verbose --timeout=30 --tries=10 --retry-connrefused ${CANN_NNAL_URL} -O ~/Ascend-cann-nnal.run
+    CANN_TOOLKIT_URL=https://ascend-repo.obs.cn-east-2.myhuaweicloud.com/CANN/CANN%208.1.RC1/Ascend-cann-toolkit_8.1.RC1_linux-${ARCH}.run && \
+    CANN_KERNELS_URL=https://ascend-repo.obs.cn-east-2.myhuaweicloud.com/CANN/CANN%208.1.RC1/Ascend-cann-kernels-910b_8.1.RC1_linux-${ARCH}.run && \
+    CANN_NNAL_URL=https://ascend-repo.obs.cn-east-2.myhuaweicloud.com/CANN/CANN%208.1.RC1/Ascend-cann-nnal_8.1.RC1_linux-${ARCH}.run && \
+    wget ${CANN_TOOLKIT_URL} -O ~/Ascend-cann-toolkit.run && \
+    wget ${CANN_KERNELS_URL} -O ~/Ascend-cann-kernels.run && \
+    wget ${CANN_NNAL_URL} -O ~/Ascend-cann-nnal.run
 
 # Note: Install CANN Toolkit Development Kit Package
 RUN chmod +x ~/Ascend-cann-toolkit.run && \
@@ -137,6 +137,10 @@ ENV ATB_MATMUL_SHUFFLE_K_ENABLE=1
 ENV ATB_RUNNER_POOL_SIZE=64
 ENV ASDOPS_HOME_PATH=${ATB_HOME_PATH}
 ENV ASDOPS_MATMUL_PP_FLAG=1
+ENV ASDOPS_LOG_LEVEL=ERROR
+ENV ASDOPS_LOG_TO_STDOUT=0
+ENV ASDOPS_LOG_TO_FILE=1
+ENV ASDOPS_LOG_TO_FILE_FLUSH=0
 ENV ASDOPS_LOG_TO_BOOST_TYPE=atb
 ENV ASDOPS_LOG_PATH=/root
 ENV ASDOPS_TILING_PARSE_CACHE_DISABLE=0

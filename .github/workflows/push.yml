@@ -24,7 +24,7 @@ on:
 
 jobs:
   only-build:
-    name: build ${{ inputs.cann_tag }}(${{ matrix.arch }})
+    name: build ${{ inputs.cann_tag }}
     if: ${{ !inputs.publish }} 
     runs-on: ${{ matrix.runner }}
     strategy:
@@ -49,9 +49,10 @@ jobs:
           file: ${{ github.workspace }}/cann/${{ inputs.cann_tag }}/Dockerfile
           context: ${{ github.workspace }}/cann/${{ inputs.cann_tag }}
           outputs: type=image
+          provenance: false
 
   build-push-digest:
-    name: build ${{ inputs.cann_tag }}(${{ matrix.arch }})
+    name: build ${{ inputs.cann_tag }}
     if: ${{ inputs.publish }}
     runs-on: ${{ matrix.runner }}
     strategy:
