@@ -108,7 +108,7 @@ jobs:
             docker.io/wxsicey/cann
             quay.io/wxsicey/cann
             swr.cn-north-4.myhuaweicloud.com/wxs_test/cann
-            swr.cn-southwest-2.myhuaweicloud.com/base_image/ascend-ci
+            swr.cn-southwest-2.myhuaweicloud.com/base_image/ascend-ci/cann
           file: ${{ github.workspace }}/cann/${{ inputs.cann_tag }}/Dockerfile
           context: ${{ github.workspace }}/cann/${{ inputs.cann_tag }}
           outputs: type=image,push-by-digest=true,name-canonical=true,push=true
@@ -188,7 +188,7 @@ jobs:
               done
             done
             TAGS_JSON+="\"swr.cn-north-4.myhuaweicloud.com/wxs_test/cann:$FIRST_TAG\","
-            TAGS_JSON+="\"swr.cn-southwest-2.myhuaweicloud.com/base_image/ascend-ci:$FIRST_TAG\"]"
+            TAGS_JSON+="\"swr.cn-southwest-2.myhuaweicloud.com/base_image/ascend-ci/cann:$FIRST_TAG\"]"
           echo "tags=$TAGS_JSON" >> $GITHUB_OUTPUT
 
       - name: Create manifest list and push
@@ -208,9 +208,9 @@ jobs:
             elif [[ "$TAG" == *"swr.cn-north-4.myhuaweicloud.com/wxs_test/cann"* ]]; then
               docker buildx imagetools create -t "$TAG" \
                 $(printf 'swr.cn-north-4.myhuaweicloud.com/wxs_test/cann@sha256:%s ' *)
-            elif [[ "$TAG" == *"swr.cn-southwest-2.myhuaweicloud.com/base_image/ascend-ci"* ]]; then
+            elif [[ "$TAG" == *"swr.cn-southwest-2.myhuaweicloud.com/base_image/ascend-ci/cann"* ]]; then
               docker buildx imagetools create -t "$TAG" \
-                $(printf 'swr.cn-southwest-2.myhuaweicloud.com/base_image/ascend-ci@sha256:%s ' *)
+                $(printf 'swr.cn-southwest-2.myhuaweicloud.com/base_image/ascend-ci/cann@sha256:%s ' *)
             else
               echo "Error: Unknown registry in TAG: $TAG"
               exit 1
