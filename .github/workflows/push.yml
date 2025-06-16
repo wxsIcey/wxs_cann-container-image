@@ -186,7 +186,7 @@ jobs:
                 TAGS_JSON+="\"$registry:$tag\","
               done
             done
-            TAGS_JSON+="\"swr.cn-east-3.myhuaweicloud.com/ascendhub-test/cann:$FIRST_TAG\","
+            TAGS_JSON+="\"swr.cn-north-4.myhuaweicloud.com/wxs_test/cann:$FIRST_TAG\","
             TAGS_JSON+="\"swr.cn-southwest-2.myhuaweicloud.com/base_image/ascend-ci:$FIRST_TAG\"]"
           echo "tags=$TAGS_JSON" >> $GITHUB_OUTPUT
 
