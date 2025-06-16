@@ -108,6 +108,7 @@ jobs:
             docker.io/wxsicey/cann
             quay.io/wxsicey/cann
             swr.cn-north-4.myhuaweicloud.com/wxs_test/cann
+            swr.cn-southwest-2.myhuaweicloud.com/base_image/ascend-ci
           file: ${{ github.workspace }}/cann/${{ inputs.cann_tag }}/Dockerfile
           context: ${{ github.workspace }}/cann/${{ inputs.cann_tag }}
           outputs: type=image,push-by-digest=true,name-canonical=true,push=true
